@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Developer Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        /* Main Container */
+        .dev-dashboard {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0f0f0f;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .dev-dashboard.active {
+            transform: translateY(0);
+        }
+        
+        /* Header */
+        .dev-header {
+            background: #1a1a1a;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .dev-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .dev-close {
+            background: none;
+            border: 1px solid #666;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .dev-close:hover {
+            background: #ff4444;
+            border-color: #ff4444;
+        }
+        
+        /* Tabs */
+        .dev-tabs {
+            background: #1a1a1a;
+            display: flex;
+            padding: 0 20px;
+            gap: 20px;
+            overflow-x: auto;
+            border-bottom: 1px solid #333;
+        }
+        
+        .dev-tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #888;
+        }
+        
+        .dev-tab:hover {
+            color: #fff;
+        }
+        
+        .dev-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        /* Content Area */
+        .dev-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .tab-panel {
+            display: none;
+        }
+        
+        .tab-panel.active {
+            display: block;
+        }
+        
+        /* Grid Layout */
+        .dev-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        /* Panels */
+        .dev-panel {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .panel-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        /* Zone Indicator */
+        .zone-display {
+            margin: 20px 0;
+        }
+        
+        .zone-bar {
+            height: 60px;
+            display: flex;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            margin: 10px 0;
+        }
+        
+        .zone-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: rgba(255,255,255,0.9);
+            border-right: 1px solid rgba(0,0,0,0.3);
+        }
+        
+        .zone-avoid { background: #ff0000; width: 10%; }
+        .zone-danger { background: #ff6600; width: 5%; }
+        .zone-breakeven { background: #ffaa00; width: 5%; }
+        .zone-profit { background: #88cc00; width: 10%; }
+        .zone-high-profit { background: #00cc00; width: 20%; }
+        .zone-certainty { background: #00ff00; width: 50%; }
+        
+        .zone-marker {
+            position: absolute;
+            top: -10px;
+            width: 4px;
+            height: 80px;
+            background: #fff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.8);
+            transition: left 0.3s ease;
+        }
+        
+        .zone-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .zone-stat {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .zone-label {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .zone-value {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        /* Pattern Indicators */
+        .pattern-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .pattern-item {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #444;
+            transition: all 0.2s;
+        }
+        
+        .pattern-item.active {
+            animation: pulse 2s infinite;
+        }
+        
+        .pattern-item.insta-rug {
+            border-left-color: #ff0000;
+            background: rgba(255,0,0,0.1);
+        }
+        
+        .pattern-item.volatility-spike {
+            border-left-color: #ff6600;
+            background: rgba(255,102,0,0.1);
+        }
+        
+        .pattern-item.plateau {
+            border-left-color: #ffaa00;
+            background: rgba(255,170,0,0.1);
+        }
+        
+        .pattern-item.recovery {
+            border-left-color: #00ff00;
+            background: rgba(0,255,0,0.1);
+        }
+        
+        .pattern-name {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .pattern-details {
+            font-size: 12px;
+            color: #ccc;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .stat-item {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        /* History Table */
+        .history-container {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .history-table th,
+        .history-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .history-table th {
+            background: rgba(255,255,255,0.05);
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+        
+        .history-table tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1001;
+        }
+        
+        .action-btn {
+            background: #667eea;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+        
+        .action-btn:hover {
+            background: #5566cc;
+            transform: translateY(-2px);
+        }
+        
+        /* Toggle Button */
+        .dev-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+            transition: all 0.2s;
+            z-index: 999;
+        }
+        
+        .dev-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: #666;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dev-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dev-tabs {
+                overflow-x: scroll;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+                bottom: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Toggle Button -->
+    <div class="dev-toggle" onclick="toggleDashboard()">
+        <span style="font-size: 24px;">⚙️</span>
+    </div>
+    
+    <!-- Main Dashboard -->
+    <div class="dev-dashboard" id="devDashboard">
+        <!-- Header -->
+        <div class="dev-header">
+            <div class="dev-title">
+                <span>🛠️</span>
+                <span>Enhanced Developer Dashboard</span>
+            </div>
+            <button class="dev-close" onclick="toggleDashboard()">✕ Close</button>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="dev-tabs">
+            <div class="dev-tab active" data-tab="overview">
+                <span>📊</span>
+                <span>Overview</span>
+            </div>
+            <div class="dev-tab" data-tab="zones">
+                <span>🎯</span>
+                <span>Zones & Probability</span>
+            </div>
+            <div class="dev-tab" data-tab="patterns">
+                <span>🔍</span>
+                <span>Pattern Detection</span>
+            </div>
+            <div class="dev-tab" data-tab="martingale">
+                <span>💰</span>
+                <span>Martingale</span>
+            </div>
+            <div class="dev-tab" data-tab="history">
+                <span>📜</span>
+                <span>History</span>
+            </div>
+            <div class="dev-tab" data-tab="analytics">
+                <span>📈</span>
+                <span>Analytics</span>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="dev-content">
+            <!-- Overview Tab -->
+            <div class="tab-panel active" id="overview-panel">
+                <div class="dev-grid">
+                    <!-- Current Game Stats -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Current Game</h3>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">Tick</div>
+                                <div class="stat-value" id="current-tick">0</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Multiplier</div>
+                                <div class="stat-value" id="current-multi">1.00x</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Volatility</div>
+                                <div class="stat-value" id="current-vol">-</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Risk Score</div>
+                                <div class="stat-value" id="risk-score">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Zone Display -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Current Zone</h3>
+                        </div>
+                        <div class="zone-stat">
+                            <div class="zone-value" id="quick-zone" style="font-size: 24px; text-align: center; padding: 20px;">
+                                -
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Active Patterns -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Active Patterns</h3>
+                        </div>
+                        <div id="active-patterns">
+                            <div style="text-align: center; color: #666; padding: 20px;">
+                                No patterns detected
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendation -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Current Recommendation</h3>
+                        </div>
+                        <div style="text-align: center; padding: 20px;">
+                            <div id="current-rec" style="font-size: 32px; font-weight: bold; color: #00ff88;">
+                                -
+                            </div>
+                            <div id="rec-confidence" style="font-size: 14px; color: #888; margin-top: 10px;">
+                                -
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Zones Tab -->
+            <div class="tab-panel" id="zones-panel">
+                <div class="dev-grid">
+                    <!-- Zone Visualization -->
+                    <div class="dev-panel" style="grid-column: span 2;">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Probability Zone Visualization</h3>
+                        </div>
+                        <div class="zone-display">
+                            <div class="zone-bar">
+                                <div class="zone-segment zone-avoid">Avoid<br>0-10%</div>
+                                <div class="zone-segment zone-danger">Danger<br>10-15%</div>
+                                <div class="zone-segment zone-breakeven">Break<br>15-20%</div>
+                                <div class="zone-segment zone-profit">Profit<br>20-30%</div>
+                                <div class="zone-segment zone-high-profit">High<br>30-50%</div>
+                                <div class="zone-segment zone-certainty">Certainty<br>50%+</div>
+                                <div class="zone-marker" id="zone-marker" style="left: 5%;"></div>
+                            </div>
+                            <div class="zone-info">
+                                <div class="zone-stat">
+                                    <div class="zone-label">Current Zone</div>
+                                    <div class="zone-value" id="zone-name">-</div>
+                                </div>
+                                <div class="zone-stat">
+                                    <div class="zone-label">40-Tick Rug %</div>
+                                    <div class="zone-value" id="rug-prob">-</div>
+                                </div>
+                                <div class="zone-stat">
+                                    <div class="zone-label">Expected Value</div>
+                                    <div class="zone-value" id="zone-ev">-</div>
+                                </div>
+                                <div class="zone-stat">
+                                    <div class="zone-label">Recommendation</div>
+                                    <div class="zone-value" id="zone-rec">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Zone History -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Zone History</h3>
+                        </div>
+                        <div class="history-container">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Zone</th>
+                                        <th>Prob</th>
+                                        <th>EV</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="zone-history">
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; color: #666;">No history yet</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Patterns Tab -->
+            <div class="tab-panel" id="patterns-panel">
+                <div class="dev-grid">
+                    <!-- Pattern Detection Status -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Pattern Detection Status</h3>
+                        </div>
+                        <div class="pattern-list">
+                            <div class="pattern-item insta-rug" id="pattern-insta">
+                                <div class="pattern-name">⚠️ Insta-rug Pattern (84%)</div>
+                                <div class="pattern-details">Not detected - Requires 50x multiplier</div>
+                            </div>
+                            <div class="pattern-item volatility-spike" id="pattern-vol">
+                                <div class="pattern-name">⚡ Volatility Spike (78%)</div>
+                                <div class="pattern-details">Not detected - Monitoring volatility</div>
+                            </div>
+                            <div class="pattern-item plateau" id="pattern-plateau">
+                                <div class="pattern-name">⏸️ Plateau Pattern (45%+)</div>
+                                <div class="pattern-details">Not detected - Requires 30 tick window</div>
+                            </div>
+                            <div class="pattern-item recovery" id="pattern-recovery">
+                                <div class="pattern-name">✅ Recovery Pattern (-30%)</div>
+                                <div class="pattern-details">Not detected - Monitoring for dips</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pattern Statistics -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Pattern Accuracy</h3>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">Insta-rug</div>
+                                <div class="stat-value" id="acc-insta">-</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Vol Spike</div>
+                                <div class="stat-value" id="acc-vol">-</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Plateau</div>
+                                <div class="stat-value" id="acc-plateau">-</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Recovery</div>
+                                <div class="stat-value" id="acc-recovery">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pattern History -->
+                    <div class="dev-panel" style="grid-column: span 2;">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Recent Pattern Detections</h3>
+                        </div>
+                        <div class="history-container">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Pattern</th>
+                                        <th>Details</th>
+                                        <th>Outcome</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pattern-history">
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; color: #666;">No patterns detected yet</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Other tabs will be implemented in subsequent phases -->
+            <div class="tab-panel" id="martingale-panel">
+                <div class="loading">Martingale panel coming soon...</div>
+            </div>
+            
+            <div class="tab-panel" id="history-panel">
+                <div class="loading">History panel coming soon...</div>
+            </div>
+            
+            <div class="tab-panel" id="analytics-panel">
+                <div class="loading">Analytics panel coming soon...</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="quick-actions" id="quickActions" style="display: none;">
+        <button class="action-btn" onclick="exportData()">📥 Export</button>
+        <button class="action-btn" onclick="testPatterns()">🧪 Test</button>
+        <button class="action-btn" onclick="clearData()">🗑️ Clear</button>
+    </div>
+    
+    <script>
+        // Dashboard state
+        let dashboardActive = false;
+        let currentTab = 'overview';
+        let updateInterval = null;
+        
+        // Mock data for testing (replace with real data connection)
+        let mockData = {
+            tick: 0,
+            multiplier: 1.0,
+            volatility: 0.002,
+            gameHistory: [],
+            zoneHistory: [],
+            patternHistory: []
+        };
+        
+        // Toggle dashboard
+        function toggleDashboard() {
+            dashboardActive = !dashboardActive;
+            const dashboard = document.getElementById('devDashboard');
+            const quickActions = document.getElementById('quickActions');
+            
+            if (dashboardActive) {
+                dashboard.classList.add('active');
+                quickActions.style.display = 'flex';
+                startUpdates();
+            } else {
+                dashboard.classList.remove('active');
+                quickActions.style.display = 'none';
+                stopUpdates();
+            }
+        }
+        
+        // Tab switching
+        document.querySelectorAll('.dev-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+                switchTab(tabName);
+            });
+        });
+        
+        function switchTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.dev-tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.tab === tabName);
+            });
+            
+            // Update panels
+            document.querySelectorAll('.tab-panel').forEach(p => {
+                p.classList.toggle('active', p.id === `${tabName}-panel`);
+            });
+            
+            currentTab = tabName;
+        }
+        
+        // Start real-time updates
+        function startUpdates() {
+            updateDashboard();
+            updateInterval = setInterval(updateDashboard, 100);
+        }
+        
+        function stopUpdates() {
+            if (updateInterval) {
+                clearInterval(updateInterval);
+                updateInterval = null;
+            }
+        }
+        
+        // Update dashboard data
+        function updateDashboard() {
+            // Simulate data updates (replace with real data)
+            mockData.tick++;
+            mockData.multiplier = 1 + (mockData.tick * 0.01) + (Math.random() * 0.02);
+            mockData.volatility = 0.001 + (Math.random() * 0.004);
+            
+            // Update overview
+            document.getElementById('current-tick').textContent = mockData.tick;
+            document.getElementById('current-multi').textContent = mockData.multiplier.toFixed(2) + 'x';
+            document.getElementById('current-vol').textContent = (mockData.volatility * 100).toFixed(2) + '%';
+            
+            // Calculate mock zone (replace with real calculation)
+            const rugProb = 0.05 + (Math.random() * 0.4);
+            updateZoneDisplay(rugProb);
+            
+            // Update pattern detection (mock)
+            updatePatternDisplay();
+        }
+        
+        // Update zone display
+        function updateZoneDisplay(rugProb) {
+            const zones = [
+                { name: 'Avoid', min: 0, max: 0.10, color: '#ff0000' },
+                { name: 'Danger', min: 0.10, max: 0.15, color: '#ff6600' },
+                { name: 'Breakeven', min: 0.15, max: 0.20, color: '#ffaa00' },
+                { name: 'Profit', min: 0.20, max: 0.30, color: '#88cc00' },
+                { name: 'High Profit', min: 0.30, max: 0.50, color: '#00cc00' },
+                { name: 'Certainty', min: 0.50, max: 1.0, color: '#00ff00' }
+            ];
+            
+            const zone = zones.find(z => rugProb >= z.min && rugProb < z.max);
+            const markerPosition = Math.min(rugProb * 100, 95);
+            
+            // Update marker
+            const marker = document.getElementById('zone-marker');
+            if (marker) marker.style.left = markerPosition + '%';
+            
+            // Update zone info
+            document.getElementById('zone-name').textContent = zone.name;
+            document.getElementById('rug-prob').textContent = (rugProb * 100).toFixed(1) + '%';
+            document.getElementById('zone-ev').textContent = ((rugProb * 6 - 1) * 100).toFixed(1) + '%';
+            document.getElementById('zone-rec').textContent = 
+                zone.name === 'Avoid' || zone.name === 'Danger' ? 'EXIT' : 'HOLD';
+            
+            // Update quick zone
+            const quickZone = document.getElementById('quick-zone');
+            quickZone.textContent = zone.name + ' Zone';
+            quickZone.style.color = zone.color;
+            
+            // Add to history
+            if (mockData.tick % 50 === 0) {
+                addZoneHistory(zone.name, rugProb);
+            }
+        }
+        
+        // Add zone history entry
+        function addZoneHistory(zoneName, prob) {
+            const tbody = document.getElementById('zone-history');
+            const row = tbody.insertRow(0);
+            
+            row.innerHTML = `
+                <td>${new Date().toLocaleTimeString()}</td>
+                <td>${zoneName}</td>
+                <td>${(prob * 100).toFixed(1)}%</td>
+                <td>${((prob * 6 - 1) * 100).toFixed(1)}%</td>
+            `;
+            
+            // Keep only last 10 entries
+            while (tbody.rows.length > 10) {
+                tbody.deleteRow(tbody.rows.length - 1);
+            }
+        }
+        
+        // Update pattern display
+        function updatePatternDisplay() {
+            // Mock pattern detection (replace with real detection)
+            if (mockData.multiplier > 50 && Math.random() > 0.8) {
+                const patternDiv = document.getElementById('pattern-insta');
+                patternDiv.classList.add('active');
+                patternDiv.querySelector('.pattern-details').textContent = 
+                    `DETECTED! Multiplier: ${mockData.multiplier.toFixed(1)}x`;
+            }
+            
+            if (mockData.volatility > 0.004 && Math.random() > 0.9) {
+                const patternDiv = document.getElementById('pattern-vol');
+                patternDiv.classList.add('active');
+                patternDiv.querySelector('.pattern-details').textContent = 
+                    `DETECTED! Volatility: ${(mockData.volatility * 100).toFixed(2)}%`;
+            }
+        }
+        
+        // Test functions
+        function exportData() {
+            console.log('Exporting data...');
+            // Implement data export
+        }
+        
+        function testPatterns() {
+            console.log('Testing patterns...');
+            // Implement pattern testing
+        }
+        
+        function clearData() {
+            if (confirm('Clear all data?')) {
+                console.log('Clearing data...');
+                // Implement data clearing
+            }
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && dashboardActive) {
+                toggleDashboard();
+            }
+            
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                toggleDashboard();
+            }
+        });
+    </script>
+</body>
+</html>

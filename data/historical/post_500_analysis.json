@@ -1,0 +1,2112 @@
+{
+  "metadata": {
+    "analyzedAt": "2025-07-21T20:36:58.960Z",
+    "totalGames": 972,
+    "sequences500Plus": 79
+  },
+  "individualGameStats": {
+    "game1": {
+      "mean": 183.20253164556962,
+      "median": 143,
+      "stdDev": 156.05852356856676,
+      "min": 4,
+      "max": 664,
+      "p25": 56,
+      "p75": 275,
+      "ranges": {
+        "0-50": {
+          "count": 16,
+          "percentage": "20.3%"
+        },
+        "51-100": {
+          "count": 16,
+          "percentage": "20.3%"
+        },
+        "101-200": {
+          "count": 19,
+          "percentage": "24.1%"
+        },
+        "201-300": {
+          "count": 13,
+          "percentage": "16.5%"
+        },
+        "301-400": {
+          "count": 5,
+          "percentage": "6.3%"
+        },
+        "401-500": {
+          "count": 7,
+          "percentage": "8.9%"
+        },
+        "500+": {
+          "count": 3,
+          "percentage": "3.8%"
+        }
+      },
+      "sampleSize": 79
+    },
+    "game2": {
+      "mean": 191.32911392405063,
+      "median": 127,
+      "stdDev": 221.04680308111094,
+      "min": 2,
+      "max": 1393,
+      "p25": 44,
+      "p75": 273,
+      "ranges": {
+        "0-50": {
+          "count": 21,
+          "percentage": "26.6%"
+        },
+        "51-100": {
+          "count": 12,
+          "percentage": "15.2%"
+        },
+        "101-200": {
+          "count": 21,
+          "percentage": "26.6%"
+        },
+        "201-300": {
+          "count": 9,
+          "percentage": "11.4%"
+        },
+        "301-400": {
+          "count": 8,
+          "percentage": "10.1%"
+        },
+        "401-500": {
+          "count": 1,
+          "percentage": "1.3%"
+        },
+        "500+": {
+          "count": 7,
+          "percentage": "8.9%"
+        }
+      },
+      "sampleSize": 79
+    },
+    "game3": {
+      "mean": 229.40506329113924,
+      "median": 179,
+      "stdDev": 203.76360832010437,
+      "min": 1,
+      "max": 796,
+      "p25": 61,
+      "p75": 358,
+      "ranges": {
+        "0-50": {
+          "count": 18,
+          "percentage": "22.8%"
+        },
+        "51-100": {
+          "count": 10,
+          "percentage": "12.7%"
+        },
+        "101-200": {
+          "count": 15,
+          "percentage": "19.0%"
+        },
+        "201-300": {
+          "count": 14,
+          "percentage": "17.7%"
+        },
+        "301-400": {
+          "count": 4,
+          "percentage": "5.1%"
+        },
+        "401-500": {
+          "count": 9,
+          "percentage": "11.4%"
+        },
+        "500+": {
+          "count": 9,
+          "percentage": "11.4%"
+        }
+      },
+      "sampleSize": 79
+    },
+    "combined": {
+      "mean": 201.31223628691984,
+      "median": 142,
+      "stdDev": 196.5980595613016,
+      "min": 1,
+      "max": 1393,
+      "p25": 54,
+      "p75": 288,
+      "ranges": {
+        "0-50": {
+          "count": 55,
+          "percentage": "23.2%"
+        },
+        "51-100": {
+          "count": 38,
+          "percentage": "16.0%"
+        },
+        "101-200": {
+          "count": 55,
+          "percentage": "23.2%"
+        },
+        "201-300": {
+          "count": 36,
+          "percentage": "15.2%"
+        },
+        "301-400": {
+          "count": 17,
+          "percentage": "7.2%"
+        },
+        "401-500": {
+          "count": 17,
+          "percentage": "7.2%"
+        },
+        "500+": {
+          "count": 19,
+          "percentage": "8.0%"
+        }
+      },
+      "sampleSize": 237
+    }
+  },
+  "baseline": {
+    "mean": 197.61522633744855,
+    "median": 137,
+    "stdDev": 190.797541240623,
+    "min": 1,
+    "max": 1393,
+    "p25": 58,
+    "p75": 281,
+    "ranges": {
+      "0-50": {
+        "count": 215,
+        "percentage": "22.1%"
+      },
+      "51-100": {
+        "count": 163,
+        "percentage": "16.8%"
+      },
+      "101-200": {
+        "count": 232,
+        "percentage": "23.9%"
+      },
+      "201-300": {
+        "count": 144,
+        "percentage": "14.8%"
+      },
+      "301-400": {
+        "count": 87,
+        "percentage": "9.0%"
+      },
+      "401-500": {
+        "count": 52,
+        "percentage": "5.3%"
+      },
+      "500+": {
+        "count": 79,
+        "percentage": "8.1%"
+      }
+    },
+    "sampleSize": 972
+  },
+  "patterns": {
+    "immediateRugRate": 0.20253164556962025,
+    "quickRecoveryRate": 0.24050632911392406,
+    "gradualRecoveryRate": 0.13924050632911392
+  },
+  "sequences": [
+    {
+      "trigger": {
+        "index": 30,
+        "duration": 506,
+        "multiplier": 3.0997514710453213
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 80,
+          "multiplier": 1.7918743967315394
+        },
+        {
+          "position": 2,
+          "duration": 131,
+          "multiplier": 1.0254747956297936
+        },
+        {
+          "position": 3,
+          "duration": 10,
+          "multiplier": 1.1181245761227665
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 35,
+        "duration": 523,
+        "multiplier": 4.313895822543578
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 8,
+          "multiplier": 1.4839381928731838
+        },
+        {
+          "position": 2,
+          "duration": 26,
+          "multiplier": 1.0855108353784244
+        },
+        {
+          "position": 3,
+          "duration": 45,
+          "multiplier": 1.6758989708665513
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 43,
+        "duration": 925,
+        "multiplier": 12.268337096058568
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 249,
+          "multiplier": 1.1985591801051891
+        },
+        {
+          "position": 2,
+          "duration": 142,
+          "multiplier": 3.5243426105630578
+        },
+        {
+          "position": 3,
+          "duration": 560,
+          "multiplier": 1.3339249373942081
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 46,
+        "duration": 560,
+        "multiplier": 1.3339249373942081
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 251,
+          "multiplier": 7.240825600505832
+        },
+        {
+          "position": 2,
+          "duration": 301,
+          "multiplier": 2.9787267737415983
+        },
+        {
+          "position": 3,
+          "duration": 288,
+          "multiplier": 9.107869818088615
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 74,
+        "duration": 657,
+        "multiplier": 13.750908515044298
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 427,
+          "multiplier": 5.339311906573055
+        },
+        {
+          "position": 2,
+          "duration": 245,
+          "multiplier": 1.1375020155957682
+        },
+        {
+          "position": 3,
+          "duration": 49,
+          "multiplier": 1.0045902054070364
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 97,
+        "duration": 582,
+        "multiplier": 11.137514810592743
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 144,
+          "multiplier": 1.0632601185513237
+        },
+        {
+          "position": 2,
+          "duration": 111,
+          "multiplier": 2.391671168153315
+        },
+        {
+          "position": 3,
+          "duration": 201,
+          "multiplier": 2.3467363318873207
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 113,
+        "duration": 544,
+        "multiplier": 10.28611667467455
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 134,
+          "multiplier": 3.5831220504913617
+        },
+        {
+          "position": 2,
+          "duration": 45,
+          "multiplier": 1.6272421949275473
+        },
+        {
+          "position": 3,
+          "duration": 254,
+          "multiplier": 10.63206342991353
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 126,
+        "duration": 721,
+        "multiplier": 1.7267950859483443
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 29,
+          "multiplier": 1.3553144952441063
+        },
+        {
+          "position": 2,
+          "duration": 167,
+          "multiplier": 1.7308395643408423
+        },
+        {
+          "position": 3,
+          "duration": 88,
+          "multiplier": 2.9725434141532796
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 130,
+        "duration": 514,
+        "multiplier": 6.943680543093736
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 97,
+          "multiplier": 1.6190440152310364
+        },
+        {
+          "position": 2,
+          "duration": 211,
+          "multiplier": 1.4231433560163267
+        },
+        {
+          "position": 3,
+          "duration": 267,
+          "multiplier": 5.388566832744431
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 143,
+        "duration": 733,
+        "multiplier": 1.9507237155659383
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 474,
+          "multiplier": 12.675977124831432
+        },
+        {
+          "position": 2,
+          "duration": 360,
+          "multiplier": 1.389886367960349
+        },
+        {
+          "position": 3,
+          "duration": 611,
+          "multiplier": 32.44049430087563
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 146,
+        "duration": 611,
+        "multiplier": 32.44049430087563
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 75,
+          "multiplier": 1.3359358797237708
+        },
+        {
+          "position": 2,
+          "duration": 616,
+          "multiplier": 4.497489101103252
+        },
+        {
+          "position": 3,
+          "duration": 403,
+          "multiplier": 24.063812248322595
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 148,
+        "duration": 616,
+        "multiplier": 4.497489101103252
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 403,
+          "multiplier": 24.063812248322595
+        },
+        {
+          "position": 2,
+          "duration": 8,
+          "multiplier": 1.0063839827734615
+        },
+        {
+          "position": 3,
+          "duration": 1,
+          "multiplier": 1
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 152,
+        "duration": 753,
+        "multiplier": 12.276405749906102
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 195,
+          "multiplier": 1.231817466659383
+        },
+        {
+          "position": 2,
+          "duration": 131,
+          "multiplier": 1.5553772953982643
+        },
+        {
+          "position": 3,
+          "duration": 423,
+          "multiplier": 1.5494551012210986
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 156,
+        "duration": 755,
+        "multiplier": 126.00262354577582
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 468,
+          "multiplier": 2.796471928063527
+        },
+        {
+          "position": 2,
+          "duration": 315,
+          "multiplier": 10.90871447299752
+        },
+        {
+          "position": 3,
+          "duration": 248,
+          "multiplier": 2.1662119173485923
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 171,
+        "duration": 726,
+        "multiplier": 2.160752739578422
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 156,
+          "multiplier": 1.9904820844975295
+        },
+        {
+          "position": 2,
+          "duration": 547,
+          "multiplier": 8.642732504878234
+        },
+        {
+          "position": 3,
+          "duration": 299,
+          "multiplier": 3.217493196157031
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 173,
+        "duration": 547,
+        "multiplier": 8.642732504878234
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 299,
+          "multiplier": 3.217493196157031
+        },
+        {
+          "position": 2,
+          "duration": 34,
+          "multiplier": 1.2961603879510046
+        },
+        {
+          "position": 3,
+          "duration": 339,
+          "multiplier": 5.7516694560033015
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 194,
+        "duration": 668,
+        "multiplier": 12.21451097617615
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 116,
+          "multiplier": 1.2862136236594646
+        },
+        {
+          "position": 2,
+          "duration": 88,
+          "multiplier": 1.5816402744007565
+        },
+        {
+          "position": 3,
+          "duration": 260,
+          "multiplier": 1.3228891993388026
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 201,
+        "duration": 843,
+        "multiplier": 3.2301665432388433
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 202,
+          "multiplier": 1.094683323110447
+        },
+        {
+          "position": 2,
+          "duration": 83,
+          "multiplier": 1.5036357306279213
+        },
+        {
+          "position": 3,
+          "duration": 276,
+          "multiplier": 1.6655793147954447
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 208,
+        "duration": 540,
+        "multiplier": 1.201412033950901
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 149,
+          "multiplier": 8.177034783838188
+        },
+        {
+          "position": 2,
+          "duration": 3,
+          "multiplier": 1.0138229749689762
+        },
+        {
+          "position": 3,
+          "duration": 358,
+          "multiplier": 2.211497375311092
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 221,
+        "duration": 526,
+        "multiplier": 2.6870904263320226
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 98,
+          "multiplier": 6.05839437702142
+        },
+        {
+          "position": 2,
+          "duration": 143,
+          "multiplier": 2.019379547745749
+        },
+        {
+          "position": 3,
+          "duration": 346,
+          "multiplier": 6.483438076438572
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 226,
+        "duration": 594,
+        "multiplier": 19.036564128306974
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 44,
+          "multiplier": 4.310208345406038
+        },
+        {
+          "position": 2,
+          "duration": 76,
+          "multiplier": 1.1573913789999397
+        },
+        {
+          "position": 3,
+          "duration": 105,
+          "multiplier": 2.31182158449045
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 241,
+        "duration": 1031,
+        "multiplier": 1.6245020792828302
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 24,
+          "multiplier": 1.1558252522702142
+        },
+        {
+          "position": 2,
+          "duration": 11,
+          "multiplier": 1.1873152004527623
+        },
+        {
+          "position": 3,
+          "duration": 477,
+          "multiplier": 6.845646916451549
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 253,
+        "duration": 510,
+        "multiplier": 5.228843836111643
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 115,
+          "multiplier": 1.058328480816017
+        },
+        {
+          "position": 2,
+          "duration": 1393,
+          "multiplier": 258.94178114814264
+        },
+        {
+          "position": 3,
+          "duration": 18,
+          "multiplier": 1.0122212782469973
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 255,
+        "duration": 1393,
+        "multiplier": 258.94178114814264
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 18,
+          "multiplier": 1.0122212782469973
+        },
+        {
+          "position": 2,
+          "duration": 26,
+          "multiplier": 1.093360802678497
+        },
+        {
+          "position": 3,
+          "duration": 143,
+          "multiplier": 1.0249643522279284
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 266,
+        "duration": 626,
+        "multiplier": 6.235707618460675
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 139,
+          "multiplier": 1.778418322898746
+        },
+        {
+          "position": 2,
+          "duration": 82,
+          "multiplier": 2.506801282826248
+        },
+        {
+          "position": 3,
+          "duration": 502,
+          "multiplier": 4.009725801309206
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 269,
+        "duration": 502,
+        "multiplier": 4.009725801309206
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 261,
+          "multiplier": 4.604358238214002
+        },
+        {
+          "position": 2,
+          "duration": 9,
+          "multiplier": 1.0492930992622957
+        },
+        {
+          "position": 3,
+          "duration": 269,
+          "multiplier": 2.929481790026798
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 276,
+        "duration": 518,
+        "multiplier": 2.353240164925226
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 143,
+          "multiplier": 2.9891222847538117
+        },
+        {
+          "position": 2,
+          "duration": 194,
+          "multiplier": 1
+        },
+        {
+          "position": 3,
+          "duration": 107,
+          "multiplier": 4.272891143573198
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 281,
+        "duration": 790,
+        "multiplier": 16.09388382849741
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 494,
+          "multiplier": 3.081675203805243
+        },
+        {
+          "position": 2,
+          "duration": 679,
+          "multiplier": 5.661506324753534
+        },
+        {
+          "position": 3,
+          "duration": 54,
+          "multiplier": 1.5811135271729588
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 283,
+        "duration": 679,
+        "multiplier": 5.661506324753534
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 54,
+          "multiplier": 1.5811135271729588
+        },
+        {
+          "position": 2,
+          "duration": 177,
+          "multiplier": 1.0362118983546234
+        },
+        {
+          "position": 3,
+          "duration": 198,
+          "multiplier": 2.0320672202931935
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 306,
+        "duration": 535,
+        "multiplier": 1.19477632675276
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 70,
+          "multiplier": 1.7246943415406673
+        },
+        {
+          "position": 2,
+          "duration": 51,
+          "multiplier": 1.0946165023296672
+        },
+        {
+          "position": 3,
+          "duration": 10,
+          "multiplier": 1.301295827820822
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 344,
+        "duration": 636,
+        "multiplier": 9.206413731265895
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 65,
+          "multiplier": 1.1745905394676104
+        },
+        {
+          "position": 2,
+          "duration": 292,
+          "multiplier": 2.42839440482558
+        },
+        {
+          "position": 3,
+          "duration": 46,
+          "multiplier": 1.9360679998375228
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 352,
+        "duration": 535,
+        "multiplier": 7.694843012510024
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 196,
+          "multiplier": 7.267133961980178
+        },
+        {
+          "position": 2,
+          "duration": 10,
+          "multiplier": 1.1060941588131088
+        },
+        {
+          "position": 3,
+          "duration": 404,
+          "multiplier": 3.521172540900974
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 379,
+        "duration": 751,
+        "multiplier": 4.841524954399387
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 54,
+          "multiplier": 2.8389935429745923
+        },
+        {
+          "position": 2,
+          "duration": 291,
+          "multiplier": 1.503736118855954
+        },
+        {
+          "position": 3,
+          "duration": 21,
+          "multiplier": 1.181647005996452
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 384,
+        "duration": 751,
+        "multiplier": 1.7789035409237006
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 145,
+          "multiplier": 2.2172915766309824
+        },
+        {
+          "position": 2,
+          "duration": 25,
+          "multiplier": 1.9058792854722992
+        },
+        {
+          "position": 3,
+          "duration": 550,
+          "multiplier": 2.8336526034595244
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 387,
+        "duration": 550,
+        "multiplier": 2.8336526034595244
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 263,
+          "multiplier": 3.570560906867049
+        },
+        {
+          "position": 2,
+          "duration": 356,
+          "multiplier": 4.910206614932769
+        },
+        {
+          "position": 3,
+          "duration": 9,
+          "multiplier": 1.0406446126101896
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 395,
+        "duration": 593,
+        "multiplier": 16.664511131437973
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 35,
+          "multiplier": 1.4763089547702792
+        },
+        {
+          "position": 2,
+          "duration": 7,
+          "multiplier": 1.0244663285924032
+        },
+        {
+          "position": 3,
+          "duration": 796,
+          "multiplier": 24.441892540171438
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 398,
+        "duration": 796,
+        "multiplier": 24.441892540171438
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 68,
+          "multiplier": 2.161905489791076
+        },
+        {
+          "position": 2,
+          "duration": 2,
+          "multiplier": 1
+        },
+        {
+          "position": 3,
+          "duration": 225,
+          "multiplier": 2.9844912856895274
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 408,
+        "duration": 759,
+        "multiplier": 1.3600562561312686
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 283,
+          "multiplier": 11.14054525230942
+        },
+        {
+          "position": 2,
+          "duration": 71,
+          "multiplier": 1.9664428430675793
+        },
+        {
+          "position": 3,
+          "duration": 446,
+          "multiplier": 1.1810840347832305
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 456,
+        "duration": 538,
+        "multiplier": 1.107206158998626
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 154,
+          "multiplier": 1.0837878224470576
+        },
+        {
+          "position": 2,
+          "duration": 257,
+          "multiplier": 13.741723502587659
+        },
+        {
+          "position": 3,
+          "duration": 250,
+          "multiplier": 4.844606988662811
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 464,
+        "duration": 829,
+        "multiplier": 603.7313910055677
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 185,
+          "multiplier": 603.7313910055677
+        },
+        {
+          "position": 2,
+          "duration": 510,
+          "multiplier": 14.818666422852585
+        },
+        {
+          "position": 3,
+          "duration": 29,
+          "multiplier": 1.6492015312024875
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 466,
+        "duration": 510,
+        "multiplier": 14.818666422852585
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 29,
+          "multiplier": 1.6492015312024875
+        },
+        {
+          "position": 2,
+          "duration": 253,
+          "multiplier": 2.569862685382807
+        },
+        {
+          "position": 3,
+          "duration": 99,
+          "multiplier": 1.2337262186415339
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 472,
+        "duration": 1177,
+        "multiplier": 6.208647113799273
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 577,
+          "multiplier": 6.911851241478222
+        },
+        {
+          "position": 2,
+          "duration": 199,
+          "multiplier": 7.945193387333617
+        },
+        {
+          "position": 3,
+          "duration": 102,
+          "multiplier": 1.3354866487578576
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 473,
+        "duration": 577,
+        "multiplier": 6.911851241478222
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 199,
+          "multiplier": 7.945193387333617
+        },
+        {
+          "position": 2,
+          "duration": 102,
+          "multiplier": 1.3354866487578576
+        },
+        {
+          "position": 3,
+          "duration": 179,
+          "multiplier": 2.3129354189089297
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 494,
+        "duration": 764,
+        "multiplier": 34.65411526749815
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 235,
+          "multiplier": 1.3641870828299483
+        },
+        {
+          "position": 2,
+          "duration": 206,
+          "multiplier": 2.423335101900689
+        },
+        {
+          "position": 3,
+          "duration": 65,
+          "multiplier": 1.2394648861818527
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 500,
+        "duration": 520,
+        "multiplier": 10.416200359190924
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 6,
+          "multiplier": 1.0677765250832334
+        },
+        {
+          "position": 2,
+          "duration": 133,
+          "multiplier": 1.3248531617027004
+        },
+        {
+          "position": 3,
+          "duration": 485,
+          "multiplier": 22.226772740246986
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 519,
+        "duration": 510,
+        "multiplier": 1.1694845061081443
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 4,
+          "multiplier": 1.0270025639662963
+        },
+        {
+          "position": 2,
+          "duration": 4,
+          "multiplier": 1.0298548013771402
+        },
+        {
+          "position": 3,
+          "duration": 447,
+          "multiplier": 3.996792183295408
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 526,
+        "duration": 679,
+        "multiplier": 89.05205077344816
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 17,
+          "multiplier": 1.2702926778314403
+        },
+        {
+          "position": 2,
+          "duration": 806,
+          "multiplier": 200.22355865247803
+        },
+        {
+          "position": 3,
+          "duration": 157,
+          "multiplier": 2.984012438898805
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 528,
+        "duration": 806,
+        "multiplier": 200.22355865247803
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 157,
+          "multiplier": 2.984012438898805
+        },
+        {
+          "position": 2,
+          "duration": 378,
+          "multiplier": 62.25633895216427
+        },
+        {
+          "position": 3,
+          "duration": 368,
+          "multiplier": 76.5211623577501
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 549,
+        "duration": 688,
+        "multiplier": 3.1922598631220787
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 299,
+          "multiplier": 1.4599394891117476
+        },
+        {
+          "position": 2,
+          "duration": 336,
+          "multiplier": 1.328111166895093
+        },
+        {
+          "position": 3,
+          "duration": 173,
+          "multiplier": 2.1449417213713784
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 557,
+        "duration": 585,
+        "multiplier": 1.0868381738152457
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 72,
+          "multiplier": 1.7956890647390087
+        },
+        {
+          "position": 2,
+          "duration": 29,
+          "multiplier": 1
+        },
+        {
+          "position": 3,
+          "duration": 252,
+          "multiplier": 2.7024196938625367
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 591,
+        "duration": 695,
+        "multiplier": 3.2425345410626503
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 235,
+          "multiplier": 15.083038075641609
+        },
+        {
+          "position": 2,
+          "duration": 111,
+          "multiplier": 15.083038075641609
+        },
+        {
+          "position": 3,
+          "duration": 141,
+          "multiplier": 1.0403580541648827
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 603,
+        "duration": 572,
+        "multiplier": 1.0538494614221003
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 383,
+          "multiplier": 3.756041710223125
+        },
+        {
+          "position": 2,
+          "duration": 473,
+          "multiplier": 5.8189245367009725
+        },
+        {
+          "position": 3,
+          "duration": 100,
+          "multiplier": 2.9208909177540794
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 624,
+        "duration": 515,
+        "multiplier": 2.482479283071342
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 494,
+          "multiplier": 77.87675561318093
+        },
+        {
+          "position": 2,
+          "duration": 159,
+          "multiplier": 1.2896589171865653
+        },
+        {
+          "position": 3,
+          "duration": 6,
+          "multiplier": 1.010334679178614
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 636,
+        "duration": 953,
+        "multiplier": 11.851980332276586
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 11,
+          "multiplier": 1
+        },
+        {
+          "position": 2,
+          "duration": 21,
+          "multiplier": 1.1063283236739663
+        },
+        {
+          "position": 3,
+          "duration": 7,
+          "multiplier": 1.0349245571685468
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 643,
+        "duration": 584,
+        "multiplier": 10.907019484768032
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 300,
+          "multiplier": 5.5110030995172865
+        },
+        {
+          "position": 2,
+          "duration": 9,
+          "multiplier": 1.2671107310754635
+        },
+        {
+          "position": 3,
+          "duration": 146,
+          "multiplier": 1.032896772311604
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 660,
+        "duration": 503,
+        "multiplier": 1.6714074130211303
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 48,
+          "multiplier": 2.1838100749120106
+        },
+        {
+          "position": 2,
+          "duration": 273,
+          "multiplier": 11.693633766589636
+        },
+        {
+          "position": 3,
+          "duration": 428,
+          "multiplier": 1.64278640239149
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 668,
+        "duration": 562,
+        "multiplier": 1.0238136318189355
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 127,
+          "multiplier": 1.348351547190782
+        },
+        {
+          "position": 2,
+          "duration": 287,
+          "multiplier": 1.348351547190782
+        },
+        {
+          "position": 3,
+          "duration": 779,
+          "multiplier": 4.207795098329736
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 671,
+        "duration": 779,
+        "multiplier": 4.207795098329736
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 173,
+          "multiplier": 1.1490332404062087
+        },
+        {
+          "position": 2,
+          "duration": 118,
+          "multiplier": 2.8355401300955725
+        },
+        {
+          "position": 3,
+          "duration": 61,
+          "multiplier": 1.2129374026494635
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 680,
+        "duration": 541,
+        "multiplier": 3.7296566409473693
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 53,
+          "multiplier": 3.7296566409473693
+        },
+        {
+          "position": 2,
+          "duration": 399,
+          "multiplier": 3.7296566409473693
+        },
+        {
+          "position": 3,
+          "duration": 770,
+          "multiplier": 31.150204849060803
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 683,
+        "duration": 770,
+        "multiplier": 31.150204849060803
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 84,
+          "multiplier": 1.5914588710862547
+        },
+        {
+          "position": 2,
+          "duration": 134,
+          "multiplier": 1.0421319647225273
+        },
+        {
+          "position": 3,
+          "duration": 72,
+          "multiplier": 1.3455388719740926
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 704,
+        "duration": 555,
+        "multiplier": 1.5308075321845207
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 64,
+          "multiplier": 2.5242463377869138
+        },
+        {
+          "position": 2,
+          "duration": 375,
+          "multiplier": 2.4142345665145046
+        },
+        {
+          "position": 3,
+          "duration": 11,
+          "multiplier": 1.2371605619892219
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 724,
+        "duration": 553,
+        "multiplier": 2.287051506271681
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 78,
+          "multiplier": 3.3045164297790435
+        },
+        {
+          "position": 2,
+          "duration": 36,
+          "multiplier": 1.8429304044024848
+        },
+        {
+          "position": 3,
+          "duration": 22,
+          "multiplier": 1.427079796087663
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 742,
+        "duration": 668,
+        "multiplier": 1.7051348787346063
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 56,
+          "multiplier": 1.5667023844902856
+        },
+        {
+          "position": 2,
+          "duration": 123,
+          "multiplier": 1.0274307806359924
+        },
+        {
+          "position": 3,
+          "duration": 80,
+          "multiplier": 2.313121869293932
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 759,
+        "duration": 522,
+        "multiplier": 10.160649425278706
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 664,
+          "multiplier": 533.6482618707454
+        },
+        {
+          "position": 2,
+          "duration": 120,
+          "multiplier": 1.0889136533594233
+        },
+        {
+          "position": 3,
+          "duration": 190,
+          "multiplier": 1.663669264708353
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 760,
+        "duration": 664,
+        "multiplier": 533.6482618707454
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 120,
+          "multiplier": 1.0889136533594233
+        },
+        {
+          "position": 2,
+          "duration": 190,
+          "multiplier": 1.663669264708353
+        },
+        {
+          "position": 3,
+          "duration": 108,
+          "multiplier": 1.8994773251206787
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 778,
+        "duration": 723,
+        "multiplier": 11.595909353950772
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 453,
+          "multiplier": 6.68617777369978
+        },
+        {
+          "position": 2,
+          "duration": 29,
+          "multiplier": 1.0716366690497667
+        },
+        {
+          "position": 3,
+          "duration": 150,
+          "multiplier": 4.2997241288884345
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 782,
+        "duration": 674,
+        "multiplier": 7.025514926946867
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 375,
+          "multiplier": 13.293730597504746
+        },
+        {
+          "position": 2,
+          "duration": 64,
+          "multiplier": 1.1674131579948286
+        },
+        {
+          "position": 3,
+          "duration": 65,
+          "multiplier": 1.5710508193841195
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 807,
+        "duration": 500,
+        "multiplier": 2.6398665862411623
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 306,
+          "multiplier": 6.742161440050948
+        },
+        {
+          "position": 2,
+          "duration": 127,
+          "multiplier": 5.092197023700901
+        },
+        {
+          "position": 3,
+          "duration": 591,
+          "multiplier": 5.513490940577989
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 810,
+        "duration": 591,
+        "multiplier": 5.513490940577989
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 364,
+          "multiplier": 1.3664364415543133
+        },
+        {
+          "position": 2,
+          "duration": 142,
+          "multiplier": 1.030910309745357
+        },
+        {
+          "position": 3,
+          "duration": 260,
+          "multiplier": 1
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 837,
+        "duration": 522,
+        "multiplier": 3.0275001077917825
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 222,
+          "multiplier": 1.86820855312626
+        },
+        {
+          "position": 2,
+          "duration": 128,
+          "multiplier": 1.051502784129732
+        },
+        {
+          "position": 3,
+          "duration": 179,
+          "multiplier": 1.3360578141299957
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 855,
+        "duration": 770,
+        "multiplier": 41.662600573854036
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 521,
+          "multiplier": 7.67372455346315
+        },
+        {
+          "position": 2,
+          "duration": 10,
+          "multiplier": 1.0755533692883346
+        },
+        {
+          "position": 3,
+          "duration": 32,
+          "multiplier": 1.059402642819355
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 856,
+        "duration": 521,
+        "multiplier": 7.67372455346315
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 10,
+          "multiplier": 1.0755533692883346
+        },
+        {
+          "position": 2,
+          "duration": 32,
+          "multiplier": 1.059402642819355
+        },
+        {
+          "position": 3,
+          "duration": 10,
+          "multiplier": 1.1118304255249587
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 874,
+        "duration": 730,
+        "multiplier": 3.5389520049672583
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 38,
+          "multiplier": 1.1007816095817955
+        },
+        {
+          "position": 2,
+          "duration": 639,
+          "multiplier": 23.996034655413368
+        },
+        {
+          "position": 3,
+          "duration": 113,
+          "multiplier": 1.0458083360508172
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 876,
+        "duration": 639,
+        "multiplier": 23.996034655413368
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 113,
+          "multiplier": 1.0458083360508172
+        },
+        {
+          "position": 2,
+          "duration": 92,
+          "multiplier": 1.2735147388854413
+        },
+        {
+          "position": 3,
+          "duration": 43,
+          "multiplier": 1.9367725280599646
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 894,
+        "duration": 1356,
+        "multiplier": 45.80815474687849
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 79,
+          "multiplier": 1.6047303318279835
+        },
+        {
+          "position": 2,
+          "duration": 44,
+          "multiplier": 2.0923476323805406
+        },
+        {
+          "position": 3,
+          "duration": 248,
+          "multiplier": 2.0923476323805406
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 900,
+        "duration": 559,
+        "multiplier": 32.371345045666466
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 275,
+          "multiplier": 2.6795709370750886
+        },
+        {
+          "position": 2,
+          "duration": 55,
+          "multiplier": 1.3451042652541303
+        },
+        {
+          "position": 3,
+          "duration": 620,
+          "multiplier": 1.1663848761300506
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 903,
+        "duration": 620,
+        "multiplier": 1.1663848761300506
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 327,
+          "multiplier": 8.008207231622478
+        },
+        {
+          "position": 2,
+          "duration": 59,
+          "multiplier": 1.5968148730251945
+        },
+        {
+          "position": 3,
+          "duration": 68,
+          "multiplier": 2.190640967741028
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 948,
+        "duration": 563,
+        "multiplier": 9.34718318435227
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 24,
+          "multiplier": 1.270623548347944
+        },
+        {
+          "position": 2,
+          "duration": 95,
+          "multiplier": 2.3770078040765332
+        },
+        {
+          "position": 3,
+          "duration": 493,
+          "multiplier": 1.8307760271172397
+        }
+      ]
+    },
+    {
+      "trigger": {
+        "index": 960,
+        "duration": 740,
+        "multiplier": 55.86924611563847
+      },
+      "following": [
+        {
+          "position": 1,
+          "duration": 17,
+          "multiplier": 1.119040876852257
+        },
+        {
+          "position": 2,
+          "duration": 99,
+          "multiplier": 1.3919287407629866
+        },
+        {
+          "position": 3,
+          "duration": 18,
+          "multiplier": 1
+        }
+      ]
+    }
+  ]
+}

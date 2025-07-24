@@ -1,0 +1,4170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Martingale Mobile Assistant</title>
+    
+    <!-- Performance optimizations for mobile -->
+    <link rel="preconnect" href="https://cdn.socket.io">
+    <link rel="dns-prefetch" href="https://backend.rugs.fun">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-title" content="Martingale Assistant">
+    <style>
+        /* Reset and Base Styles */
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+        
+        /* Main Container */
+        .dashboard {
+            max-width: 100%;
+            min-height: 100vh;
+            padding: 10px;
+            padding-bottom: 80px; /* Space for fixed footer */
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 15px 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .connection-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #dc3545;
+            transition: background 0.3s;
+        }
+        
+        .status-connected .status-dot {
+            background: #28a745;
+            /* No animations - accessibility [[memory:2690959]] */
+        }
+        
+        /* Game Status Card */
+        .game-status {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+        }
+        
+        /* Statistical Analysis */
+        .stats-section {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .stats-section h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .position-bar {
+            background: rgba(255,255,255,0.1);
+            height: 8px;
+            border-radius: 4px;
+            margin: 10px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .position-indicator {
+            position: absolute;
+            height: 100%;
+            background: #00ff88;
+            transition: width 0.3s ease;
+        }
+        
+        /* New survival probability styles */
+        .survival-bar {
+            background: rgba(255,255,255,0.1);
+            height: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .survival-indicator {
+            position: absolute;
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88 0%, #ffff44 50%, #ff4444 100%);
+            transition: width 0.3s ease;
+        }
+        
+        .milestone-markers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .milestone-markers .marker {
+            position: absolute;
+            top: -20px;
+            font-size: 10px;
+            color: #999;
+            transform: translateX(-50%);
+        }
+        
+        .long-game-section {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        
+        .predictor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .predictor-header span:first-child {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        #long-game-prob {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .predictor-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        /* Enhanced display components */
+        .adaptive-targets {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        
+        .adaptive-targets h4 {
+            font-size: 13px;
+            margin-bottom: 8px;
+            color: #aaa;
+        }
+        
+        .target-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+        
+        .target-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 8px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .target-prob {
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        
+        .target-prob.high {
+            color: #00ff88;
+            background: rgba(0,255,136,0.1);
+        }
+        
+        .target-prob.medium {
+            color: #ffff44;
+            background: rgba(255,255,68,0.1);
+        }
+        
+        .target-prob.low {
+            color: #ff9944;
+            background: rgba(255,153,68,0.1);
+        }
+        
+        .target-prob.very-low {
+            color: #ff4444;
+            background: rgba(255,68,68,0.1);
+        }
+        
+        .risk-assessment {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        
+        .risk-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .risk-header span:first-child {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .risk-factors {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4px;
+            font-size: 11px;
+            color: #999;
+        }
+        
+        .risk-factor {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .post500-indicator {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #4a5568;
+            transition: all 0.3s ease;
+        }
+        
+        .post500-indicator.sequence-1 {
+            border-color: #f6e05e;
+            background: linear-gradient(135deg, #322618 0%, #1a202c 100%);
+        }
+        
+        .post500-indicator.sequence-2 {
+            border-color: #ed8936;
+            background: linear-gradient(135deg, #3e2316 0%, #1a202c 100%);
+            animation: pulse-warning 2s infinite;
+        }
+        
+        .post500-indicator.sequence-3 {
+            border-color: #48bb78;
+            background: linear-gradient(135deg, #1a3326 0%, #1a202c 100%);
+        }
+        
+        @keyframes pulse-warning {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .post500-label {
+            font-size: 12px;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .post500-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .post500-indicator.sequence-2 .post500-value {
+            color: #ed8936;
+        }
+        
+        .post500-indicator.sequence-3 .post500-value {
+            color: #48bb78;
+        }
+        
+        /* Probability Zone Indicator */
+        .probability-zone-indicator {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .zone-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .zone-label {
+            font-size: 12px;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .zone-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .zone-bar {
+            position: relative;
+            height: 30px;
+            background: #1a202c;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+        }
+        
+        .zone-segment {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.8);
+            border-right: 1px solid rgba(0,0,0,0.3);
+        }
+        
+        .zone-segment.avoid {
+            background: #ff0000;
+        }
+        
+        .zone-segment.danger {
+            background: #ff6600;
+        }
+        
+        .zone-segment.breakeven {
+            background: #ffaa00;
+        }
+        
+        .zone-segment.profit {
+            background: #88cc00;
+        }
+        
+        .zone-segment.high-profit {
+            background: #00cc00;
+        }
+        
+        .zone-segment.certainty {
+            background: #00ff00;
+            border-right: none;
+        }
+        
+        .zone-marker {
+            position: absolute;
+            top: -5px;
+            width: 3px;
+            height: 40px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+            transition: left 0.3s ease;
+        }
+        
+        .zone-marker::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -4px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #fff;
+        }
+        
+        .strategy-recommendation {
+            margin: 10px 0;
+        }
+        
+        .recommendation-box {
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            border: 2px solid;
+        }
+        
+        .recommendation-box.exit {
+            background: rgba(220, 53, 69, 0.2);
+            border-color: #dc3545;
+            color: #ff6b7d;
+        }
+        
+        .recommendation-box.reduce {
+            background: rgba(255, 193, 7, 0.2);
+            border-color: #ffc107;
+            color: #ffd43b;
+        }
+        
+        .recommendation-box.hold {
+            background: rgba(40, 167, 69, 0.2);
+            border-color: #28a745;
+            color: #51d070;
+        }
+        
+        .recommendation-box.increase {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+            color: #8b9dff;
+        }
+        
+        .recommendation-box .details {
+            font-size: 11px;
+            font-weight: normal;
+            margin-top: 4px;
+            opacity: 0.8;
+        }
+        
+        /* Cooldown state styles */
+        .cooldown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.3s;
+        }
+        
+        .cooldown-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .cooldown-content {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .cooldown-state {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        
+        .cooldown-state.rugged {
+            color: #ff4444;
+            text-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+        }
+        
+        .cooldown-state.presale {
+            color: #00ff88;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        .cooldown-timer {
+            font-size: 24px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        
+        .cooldown-message {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .entry-zone {
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: 500;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .entry-zone.waiting {
+            background: rgba(108, 117, 125, 0.2);
+            border: 1px solid #6c757d;
+            color: #adb5bd;
+        }
+        
+        .entry-zone.early {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #ffc107;
+            color: #ffc107;
+        }
+        
+        .entry-zone.prime {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+            color: #28a745;
+        }
+        
+        .entry-zone.late {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+            color: #dc3545;
+        }
+        
+        .entry-zone.extreme-volatility {
+            background: rgba(255, 68, 68, 0.3);
+            border: 2px solid #ff4444;
+            color: #ff4444;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        /* Strategy Section */
+        .strategy-section {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .strategy-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            min-height: 48px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        .strategy-btn {
+            border-color: rgba(255,255,255,0.2);
+        }
+        
+        .strategy-btn.active {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+        
+        .strategy-btn .strategy-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .strategy-btn .strategy-bet {
+            font-size: 11px;
+            color: #999;
+            margin-top: 2px;
+        }
+        
+        /* Session Controls */
+        .session-controls {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 100%;
+            font-size: 16px;
+            padding: 12px;
+        }
+        
+        /* Active Session */
+        .active-session {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(253, 126, 20, 0.2));
+            border: 1px solid #ffc107;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .session-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .session-stat {
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .session-stat-label {
+            font-size: 11px;
+            color: #ffc107;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        
+        .session-stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .next-bet {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .bet-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffc107;
+            margin-bottom: 5px;
+        }
+        
+        .potential {
+            font-size: 14px;
+            color: #adb5bd;
+        }
+        
+        .profit {
+            font-size: 16px;
+            color: #28a745;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+        
+        .bet-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        /* Footer */
+        .status-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 360px) {
+            .stat-grid { grid-template-columns: 1fr; }
+            .strategy-buttons { grid-template-columns: 1fr; }
+            .bet-controls { grid-template-columns: 1fr; }
+        }
+        
+        /* Loading state */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            color: #666;
+        }
+        
+        /* Toast Notifications */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            pointer-events: none;
+        }
+        
+        .toast {
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.3s ease-out;
+            max-width: 90vw;
+        }
+        
+        .toast.success {
+            border-left: 4px solid #28a745;
+        }
+        
+        .toast.error {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .toast.warning {
+            border-left: 4px solid #ffc107;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+        
+        /* Developer Dashboard Styles */
+        #dev-dashboard {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            border-top: 2px solid #667eea;
+            transition: bottom 0.3s ease-out;
+            z-index: 999;
+            max-height: 50vh;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        #dev-dashboard.show {
+            bottom: 0;
+        }
+        
+        .dev-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .dev-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .dev-close {
+            background: none;
+            border: 1px solid #666;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .dev-close:hover {
+            background: #ff4444;
+            border-color: #ff4444;
+        }
+        
+        .dev-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .dev-section {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 6px;
+        }
+        
+        .dev-section h4 {
+            margin: 0 0 8px 0;
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+        }
+        
+        .dev-stat {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin: 4px 0;
+        }
+        
+        .dev-stat-label {
+            color: #ccc;
+        }
+        
+        .dev-stat-value {
+            color: #fff;
+            font-family: monospace;
+        }
+        
+        .dev-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .dev-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .dev-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Gear Icon Indicator */
+        #dev-toggle-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0.3;
+            transition: all 0.2s;
+            z-index: 998;
+            font-size: 16px;
+        }
+        
+        #dev-toggle-icon:hover {
+            opacity: 1;
+            background: rgba(102, 126, 234, 0.3);
+        }
+        
+        #dev-toggle-icon.hidden {
+            display: none;
+        }
+        
+        /* Enhanced Dashboard Additional Styles */
+        #dev-dashboard.show {
+            /* Override original bottom animation */
+            bottom: auto;
+            top: 0;
+            height: 100vh;
+            max-height: none;
+            padding: 0;
+            background: #0f0f0f;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(0);
+        }
+        
+        #dev-dashboard .dev-header {
+            background: #1a1a1a;
+            padding: 15px 20px;
+            margin: 0;
+            border-bottom: 2px solid #667eea;
+            border-top: none;
+        }
+        
+        #dev-dashboard .dev-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        /* Enhanced Tabs */
+        .dev-tabs {
+            background: #1a1a1a;
+            display: flex;
+            padding: 0 20px;
+            gap: 20px;
+            overflow-x: auto;
+            border-bottom: 1px solid #333;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .dev-tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #888;
+        }
+        
+        .dev-tab:hover {
+            color: #fff;
+        }
+        
+        .dev-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        /* Tab Panels */
+        .tab-panel {
+            display: none;
+        }
+        
+        .tab-panel.active {
+            display: block;
+        }
+        
+        /* Enhanced Panels */
+        .dev-panel {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .panel-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        /* Zone Visualization */
+        .zone-display {
+            margin: 20px 0;
+        }
+        
+        .zone-bar {
+            height: 60px;
+            display: flex;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            margin: 10px 0;
+        }
+        
+        .zone-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: rgba(255,255,255,0.9);
+            border-right: 1px solid rgba(0,0,0,0.3);
+            flex-direction: column;
+            line-height: 1.2;
+        }
+        
+        .zone-avoid { background: #ff0000; width: 10%; }
+        .zone-danger { background: #ff6600; width: 5%; }
+        .zone-breakeven { background: #ffaa00; width: 5%; }
+        .zone-profit { background: #88cc00; width: 10%; }
+        .zone-high-profit { background: #00cc00; width: 20%; }
+        .zone-certainty { background: #00ff00; width: 50%; }
+        
+        .zone-marker {
+            position: absolute;
+            top: -10px;
+            width: 4px;
+            height: 80px;
+            background: #fff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.8);
+            transition: left 0.3s ease;
+        }
+        
+        .zone-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .zone-stat {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .zone-label {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .zone-value {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        /* Pattern Indicators */
+        .pattern-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .pattern-item {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #444;
+            transition: all 0.2s;
+        }
+        
+        .pattern-item.active {
+            animation: pulse 2s infinite;
+        }
+        
+        .pattern-item.insta-rug {
+            border-left-color: #ff0000;
+            background: rgba(255,0,0,0.1);
+        }
+        
+        .pattern-item.volatility-spike {
+            border-left-color: #ff6600;
+            background: rgba(255,102,0,0.1);
+        }
+        
+        .pattern-item.plateau {
+            border-left-color: #ffaa00;
+            background: rgba(255,170,0,0.1);
+        }
+        
+        .pattern-item.recovery {
+            border-left-color: #00ff00;
+            background: rgba(0,255,0,0.1);
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .pattern-name {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .pattern-details {
+            font-size: 12px;
+            color: #ccc;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .stat-item {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        /* History Table */
+        .history-container {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .history-table th,
+        .history-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .history-table th {
+            background: rgba(255,255,255,0.05);
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        /* Martingale Visualization */
+        .purse-container {
+            position: relative;
+            height: 200px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .purse-liquid {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, #0066ff, #00aaff);
+            transition: height 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .purse-amount {
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .sequence-bar {
+            display: flex;
+            gap: 5px;
+            margin: 15px 0;
+        }
+        
+        .sequence-step {
+            flex: 1;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .sequence-step.active {
+            background: #667eea;
+        }
+        
+        .sequence-step.completed {
+            background: #00ff88;
+        }
+        
+        .sequence-step.failed {
+            background: #ff4444;
+        }
+        
+        /* Game History Browser */
+        .game-browser {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .game-item {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .game-item:hover {
+            background: rgba(255,255,255,0.08);
+            transform: translateX(5px);
+        }
+        
+        .game-duration {
+            font-size: 20px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        .game-details {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        .game-patterns {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .pattern-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        /* No animations for accessibility [[memory:2690959]] */
+    </style>
+</head>
+<body>
+    <div id="app" class="dashboard">
+        <div class="loading">Initializing...</div>
+    </div>
+    <div id="toast-container"></div>
+    
+    <!-- Cooldown overlay - Disabled in favor of toast notifications -->
+    <!-- 
+    <div class="cooldown-overlay hidden" id="cooldown-overlay">
+        <div class="cooldown-content">
+            <div class="cooldown-state" id="cooldown-state">WAITING</div>
+            <div class="cooldown-timer" id="cooldown-timer"></div>
+            <div class="cooldown-message" id="cooldown-message">Waiting for next game...</div>
+        </div>
+    </div>
+    -->
+    
+    <!-- Enhanced Developer Dashboard -->
+    <div id="dev-dashboard">
+        <div class="dev-header">
+            <div class="dev-title">🛠️ Enhanced Developer Dashboard</div>
+            <button class="dev-close" onclick="toggleDevDashboard()">✕</button>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="dev-tabs">
+            <div class="dev-tab active" data-tab="overview" onclick="switchDevTab('overview')">
+                <span>📊</span>
+                <span>Overview</span>
+            </div>
+            <div class="dev-tab" data-tab="zones" onclick="switchDevTab('zones')">
+                <span>🎯</span>
+                <span>Zones</span>
+            </div>
+            <div class="dev-tab" data-tab="patterns" onclick="switchDevTab('patterns')">
+                <span>🔍</span>
+                <span>Patterns</span>
+            </div>
+            <div class="dev-tab" data-tab="martingale" onclick="switchDevTab('martingale')">
+                <span>💰</span>
+                <span>Martingale</span>
+            </div>
+            <div class="dev-tab" data-tab="history" onclick="switchDevTab('history')">
+                <span>📜</span>
+                <span>History</span>
+            </div>
+            <div class="dev-tab" data-tab="analytics" onclick="switchDevTab('analytics')">
+                <span>📈</span>
+                <span>Analytics</span>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="dev-content">
+            <!-- Overview Tab -->
+            <div class="tab-panel active" id="overview-panel">
+                <div class="dev-grid">
+                    <!-- Current Game Stats -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Current Game</h3>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">Tick</div>
+                                <div class="stat-value" id="dev-tick">0</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Multiplier</div>
+                                <div class="stat-value" id="dev-price">1.00x</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Volatility</div>
+                                <div class="stat-value" id="dev-volatility">-</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Risk Score</div>
+                                <div class="stat-value" id="risk-score">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Zone Display -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Current Zone</h3>
+                        </div>
+                        <div class="zone-stat">
+                            <div class="zone-value" id="quick-zone" style="font-size: 24px; text-align: center; padding: 20px;">
+                                -
+                            </div>
+                            <div style="text-align: center; margin-top: 10px;">
+                                <span id="quick-rug-prob" style="font-size: 18px; color: #888;">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Active Patterns -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Active Patterns</h3>
+                        </div>
+                        <div id="active-patterns">
+                            <div style="text-align: center; color: #666; padding: 20px;">
+                                No patterns detected
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Data Collection (Legacy) -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Data Collection</h3>
+                        </div>
+                        <div class="dev-section" style="background: none; border: none; padding: 0;">
+                            <div class="dev-stat">
+                                <span class="dev-stat-label">Games:</span>
+                                <span class="dev-stat-value" id="dev-games">0/100</span>
+                            </div>
+                            <div class="dev-stat">
+                                <span class="dev-stat-label">Total:</span>
+                                <span class="dev-stat-value" id="dev-total-games">0</span>
+                            </div>
+                            <div class="dev-stat">
+                                <span class="dev-stat-label">Server:</span>
+                                <span class="dev-stat-value" id="dev-server-status" style="color: #ff4444">Offline</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="dev-buttons" style="margin-top: 20px;">
+                    <button class="dev-btn" onclick="exportGameData()">📥 Export</button>
+                    <button class="dev-btn" onclick="testPatterns()">🧪 Test Patterns</button>
+                    <button class="dev-btn" onclick="simulateGame()">🎮 Simulate</button>
+                    <button class="dev-btn" onclick="clearGameData()">🗑️ Clear</button>
+                </div>
+            </div>
+            
+            <!-- Zones Tab -->
+            <div class="tab-panel" id="zones-panel">
+                <div class="dev-grid">
+                    <!-- Zone Visualization -->
+                    <div class="dev-panel" style="grid-column: span 2;">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Probability Zone Visualization</h3>
+                        </div>
+                        <div class="zone-display">
+                            <div class="zone-bar">
+                                <div class="zone-segment zone-avoid">Avoid<br>0-10%</div>
+                                <div class="zone-segment zone-danger">Danger<br>10-15%</div>
+                                <div class="zone-segment zone-breakeven">Break<br>15-20%</div>
+                                <div class="zone-segment zone-profit">Profit<br>20-30%</div>
+                                <div class="zone-segment zone-high-profit">High<br>30-50%</div>
+                                <div class="zone-segment zone-certainty">Certainty<br>50%+</div>
+                                <div class="zone-marker" id="zone-marker" style="left: 5%;"></div>
+                            </div>
+                            <div class="zone-info">
+                                <div class="zone-stat">
+                                    <div class="zone-label">Current Zone</div>
+                                    <div class="zone-value" id="zone-name">-</div>
+                                </div>
+                                <div class="zone-stat">
+                                    <div class="zone-label">40-Tick Rug %</div>
+                                    <div class="zone-value" id="rug-prob">-</div>
+                                </div>
+                                <div class="zone-stat">
+                                    <div class="zone-label">Expected Value</div>
+                                    <div class="zone-value" id="zone-ev">-</div>
+                                </div>
+                                <div class="zone-stat">
+                                    <div class="zone-label">Recommendation</div>
+                                    <div class="zone-value" id="zone-rec">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Zone History -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Zone History</h3>
+                        </div>
+                        <div class="history-container">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Zone</th>
+                                        <th>Prob</th>
+                                        <th>EV</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="zone-history">
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; color: #666;">No history yet</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Patterns Tab -->
+            <div class="tab-panel" id="patterns-panel">
+                <div class="dev-grid">
+                    <!-- Pattern Detection Status -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Pattern Detection Status</h3>
+                        </div>
+                        <div class="pattern-list">
+                            <div class="pattern-item insta-rug" id="pattern-insta">
+                                <div class="pattern-name">⚠️ Insta-rug Pattern (84%)</div>
+                                <div class="pattern-details">Not detected - Requires 50x multiplier</div>
+                            </div>
+                            <div class="pattern-item volatility-spike" id="pattern-vol">
+                                <div class="pattern-name">⚡ Volatility Spike (78%)</div>
+                                <div class="pattern-details">Not detected - Monitoring volatility</div>
+                            </div>
+                            <div class="pattern-item plateau" id="pattern-plateau">
+                                <div class="pattern-name">⏸️ Plateau Pattern (45%+)</div>
+                                <div class="pattern-details">Not detected - Requires 30 tick window</div>
+                            </div>
+                            <div class="pattern-item recovery" id="pattern-recovery">
+                                <div class="pattern-name">✅ Recovery Pattern (-30%)</div>
+                                <div class="pattern-details">Not detected - Monitoring for dips</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pattern Statistics -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Pattern Accuracy</h3>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">Insta-rug</div>
+                                <div class="stat-value" id="acc-insta">-</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Vol Spike</div>
+                                <div class="stat-value" id="acc-vol">-</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Plateau</div>
+                                <div class="stat-value" id="acc-plateau">-</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Recovery</div>
+                                <div class="stat-value" id="acc-recovery">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Martingale Tab -->
+            <div class="tab-panel" id="martingale-panel">
+                <div class="dev-grid">
+                    <!-- Purse Visualization -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Purse Status</h3>
+                        </div>
+                        <div class="purse-container">
+                            <div class="purse-liquid" id="purse-liquid" style="height: 100%;">
+                                <div class="purse-amount" id="purse-amount">0.500 SOL</div>
+                            </div>
+                        </div>
+                        <div class="zone-info">
+                            <div class="zone-stat">
+                                <div class="zone-label">Initial</div>
+                                <div class="zone-value" id="initial-purse">0.500 SOL</div>
+                            </div>
+                            <div class="zone-stat">
+                                <div class="zone-label">Current</div>
+                                <div class="zone-value" id="current-purse">0.500 SOL</div>
+                            </div>
+                            <div class="zone-stat">
+                                <div class="zone-label">Health</div>
+                                <div class="zone-value" id="purse-health">100%</div>
+                            </div>
+                            <div class="zone-stat">
+                                <div class="zone-label">Status</div>
+                                <div class="zone-value" id="purse-status">Healthy</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sequence Tracker -->
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Martingale Sequence</h3>
+                        </div>
+                        <div class="sequence-bar">
+                            <div class="sequence-step" id="seq-1">L1</div>
+                            <div class="sequence-step" id="seq-2">L2</div>
+                            <div class="sequence-step" id="seq-3">L3</div>
+                            <div class="sequence-step" id="seq-4">L4</div>
+                            <div class="sequence-step" id="seq-5">L5</div>
+                            <div class="sequence-step" id="seq-6">L6</div>
+                            <div class="sequence-step" id="seq-7">L7</div>
+                            <div class="sequence-step" id="seq-8">L8</div>
+                            <div class="sequence-step" id="seq-9">L9</div>
+                            <div class="sequence-step" id="seq-10">L10</div>
+                        </div>
+                        <div class="zone-info" style="margin-top: 15px;">
+                            <div class="zone-stat">
+                                <div class="zone-label">Current Level</div>
+                                <div class="zone-value" id="current-level">1</div>
+                            </div>
+                            <div class="zone-stat">
+                                <div class="zone-label">Total Bets</div>
+                                <div class="zone-value" id="total-bets">0.000 SOL</div>
+                            </div>
+                            <div class="zone-stat">
+                                <div class="zone-label">Next Bet</div>
+                                <div class="zone-value" id="next-bet">0.001 SOL</div>
+                            </div>
+                            <div class="zone-stat">
+                                <div class="zone-label">NET if Win</div>
+                                <div class="zone-value" id="net-profit">+0.004 SOL</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- History Tab -->
+            <div class="tab-panel" id="history-panel">
+                <div class="dev-panel" style="max-width: none;">
+                    <div class="panel-header">
+                        <h3 class="panel-title">Game History Browser</h3>
+                    </div>
+                    <div class="game-browser" id="game-browser">
+                        <div style="text-align: center; color: #666; padding: 40px;">
+                            No games recorded yet
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Analytics Tab -->
+            <div class="tab-panel" id="analytics-panel">
+                <div class="dev-grid">
+                    <div class="dev-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Coming Soon</h3>
+                        </div>
+                        <div style="text-align: center; padding: 40px; color: #666;">
+                            Advanced analytics features will be added here
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Gear Icon Toggle -->
+    <div id="dev-toggle-icon" class="hidden" onclick="toggleDevDashboard()">⚙</div>
+    
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <!-- Load survival calculator and stats -->
+    <script>
+        // Load long game stats inline
+        const longGameStatsData = {"baseRates":{"500+":{"count":80,"rate":0.0823,"percentage":"8.23%"}},"clusteringPatterns":{"averageGap":11.9,"clusteringRate":0.684}};
+    </script>
+    <script src="../core/survival_calculator.js"></script>
+    <script src="../core/enhanced_martingale_manager.js"></script>
+    <script>
+        // Initialize survival calculator
+        const survivalCalc = new SurvivalCalculator();
+        
+        // Game state
+        let gameData = {
+            connected: false,
+            tickIndex: 0,
+            currentPrice: 1.0,
+            volatility: 5.0,
+            gameActive: false,
+            cooldownTimer: 0,
+            gamePhase: 'WAITING' // WAITING, ACTIVE, PRESALE, RUGGED
+        };
+        
+        // Current game tracking for data collection
+        let currentGame = null;
+        
+        // Volatility tracking
+        const VOLATILITY_WINDOW = 20; // Number of ticks to calculate volatility over
+        
+        // Session state
+        let sessionData = {
+            active: false,
+            strategy: 'moderate',
+            currentBet: 1,
+            totalRisked: 0,
+            betHistory: [],
+            startTick: 0
+        };
+        
+        // UI state tracking to prevent unnecessary updates
+        let lastRenderedStrategy = null;
+        let lastSessionActive = null;
+        let needsStrategyUpdate = true;
+        let needsSessionUpdate = true;
+        
+        // Rate-limited toast notification function
+        function showToastRateLimited(message, type = 'info', duration = 3000) {
+            const now = Date.now();
+            const key = `${type}_${message.substring(0, 20)}`;
+            
+            if (lastToastTime[key] && now - lastToastTime[key] < TOAST_RATE_LIMIT) {
+                return; // Skip this toast
+            }
+            
+            lastToastTime[key] = now;
+            showToast(message, type, duration);
+        }
+        
+        // Toast notification function
+        function showToast(message, type = 'info', duration = 3000) {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            // Add icon based on type
+            let icon = '';
+            switch(type) {
+                case 'success':
+                    icon = '✅';
+                    break;
+                case 'error':
+                    icon = '❌';
+                    break;
+                case 'warning':
+                    icon = '⚠️';
+                    break;
+                default:
+                    icon = 'ℹ️';
+            }
+            
+            // Support multi-line messages
+            const formattedMessage = message.replace(/\\n/g, '<br>');
+            toast.innerHTML = `<span>${icon}</span><span>${formattedMessage}</span>`;
+            toastContainer.appendChild(toast);
+            
+            // Auto remove after specified duration
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, duration);
+        }
+        
+        // Recommendation tracking functions
+        function trackRecommendation(recommendation) {
+            if (!recommendation || !recommendation.recommendation) return;
+            
+            // Check if recommendation changed
+            if (currentRecommendation && 
+                currentRecommendation.recommendation === recommendation.recommendation &&
+                currentRecommendation.tickStart === gameData.tickIndex) {
+                return; // Same recommendation, don't duplicate
+            }
+            
+            // Save current recommendation for outcome tracking
+            currentRecommendation = {
+                gameId: currentGame ? currentGame.gameId : 'unknown',
+                tickStart: gameData.tickIndex,
+                timestamp: Date.now(),
+                recommendation: recommendation.recommendation,
+                confidence: recommendation.confidence || 'unknown',
+                riskScore: recommendation.riskScore || 0,
+                expectedValue: recommendation.expectedValue || 0,
+                gameState: {
+                    price: gameData.currentPrice,
+                    volatility: currentGame && currentGame.currentVolatility ? 
+                        currentGame.currentVolatility.standardDev : null,
+                    survivalRate: recommendation.factors ? 
+                        parseFloat(recommendation.factors.survivalRate) / 100 : null,
+                    post500Position: survivalCalc.getPost500Context().position
+                },
+                // Outcome will be filled when game ends or recommendation changes
+                outcome: null
+            };
+            
+            recommendationStartTick = gameData.tickIndex;
+        }
+        
+        function checkRecommendationOutcome(endTick) {
+            if (!currentRecommendation || !recommendationStartTick) return;
+            
+            const ticksElapsed = endTick - recommendationStartTick;
+            
+            // Calculate outcomes for different windows
+            const outcome = {
+                gameEndTick: endTick,
+                ticksElapsed: ticksElapsed,
+                within10: ticksElapsed <= 10,
+                within20: ticksElapsed <= 20,
+                within30: ticksElapsed <= 30,
+                within40: ticksElapsed <= 40,
+                within50: ticksElapsed <= 50,
+                within60: ticksElapsed <= 60,
+                within70: ticksElapsed <= 70,
+                correctPrediction: false
+            };
+            
+            // Determine if prediction was correct based on recommendation type
+            if (currentRecommendation.recommendation === 'EXIT' || 
+                currentRecommendation.recommendation === 'REDUCE') {
+                // EXIT/REDUCE is correct if game ended soon
+                outcome.correctPrediction = ticksElapsed <= 40;
+            } else if (currentRecommendation.recommendation === 'HOLD' || 
+                       currentRecommendation.recommendation === 'INCREASE') {
+                // HOLD/INCREASE is correct if game continued
+                outcome.correctPrediction = ticksElapsed > 40;
+            }
+            
+            // Update the recommendation with outcome
+            currentRecommendation.outcome = outcome;
+            
+            // Add to history
+            recommendationHistory.push(currentRecommendation);
+            recommendationBatch.push(currentRecommendation);
+            
+            // Save batch if it reaches 25 recommendations
+            if (recommendationBatch.length >= 25) {
+                saveRecommendationBatch();
+            }
+            
+            // Reset current tracking
+            currentRecommendation = null;
+            recommendationStartTick = null;
+        }
+        
+        async function saveRecommendationBatch() {
+            if (recommendationBatch.length === 0) return;
+            
+            try {
+                const response = await fetch(`${SAVE_SERVER_URL}/save-recommendations`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        recommendations: recommendationBatch,
+                        timestamp: Date.now()
+                    })
+                });
+                
+                if (response.ok) {
+                    console.log(`Saved ${recommendationBatch.length} recommendations`);
+                    recommendationBatch = [];
+                }
+            } catch (error) {
+                console.error('Failed to save recommendations:', error);
+            }
+        }
+        
+        // Empirically validated baseline statistics (from research)
+        const BASELINE_STATS = {
+            median: 136,
+            mean: 197.62,
+            std: 245.89,
+            percentiles: {
+                p25: 50,
+                p50: 136,
+                p75: 264,
+                p90: 456,
+                p95: 651
+            },
+            confidence: 'baseline',
+            source: 'empirical_research',
+            gamesAnalyzed: 1000  // From calibration data
+        };
+        
+        // Current statistical data (starts as baseline, updates dynamically)
+        let statsData = {...BASELINE_STATS, lastUpdated: null};
+        
+        // Data collection arrays
+        let gameHistory = [];  // Last 100 games
+        let currentBatch = [];  // Current batch (up to 50 games)
+        let batchNumber = 1;
+        let totalGamesCollected = 0;  // Track total games ever collected
+        
+        // Recommendation tracking system
+        let recommendationHistory = [];
+        let currentRecommendation = null;
+        let recommendationStartTick = null;
+        let recommendationBatch = [];  // Batch recommendations for saving
+        
+        // Data save server configuration
+        const SAVE_SERVER_URL = 'http://localhost:9876';
+        let serverAvailable = false;
+        let pendingSaves = []; // Queue for failed saves
+        let batchSaveInProgress = false; // Prevent concurrent batch saves
+        let lastBatchSaveAttempt = 0; // For debouncing
+        const BATCH_SAVE_DEBOUNCE = 5000; // 5 seconds between batch save attempts
+        
+        // Toast notification rate limiting
+        let lastToastTime = {};
+        const TOAST_RATE_LIMIT = 5000; // Max 1 toast per 5 seconds for same message type
+        
+        // Function to save batch to server with debouncing and mutex
+        async function saveBatch() {
+            if (!serverAvailable || currentBatch.length === 0) return;
+            
+            // Prevent concurrent batch saves
+            if (batchSaveInProgress) {
+                console.log('Batch save already in progress, skipping...');
+                return;
+            }
+            
+            // Debounce batch saves
+            const now = Date.now();
+            if (now - lastBatchSaveAttempt < BATCH_SAVE_DEBOUNCE) {
+                console.log('Batch save debounced, will retry later...');
+                setTimeout(() => saveBatch(), BATCH_SAVE_DEBOUNCE);
+                return;
+            }
+            
+            batchSaveInProgress = true;
+            lastBatchSaveAttempt = now;
+            
+            try {
+                const response = await fetch(`${SAVE_SERVER_URL}/save-batch`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        games: currentBatch,
+                        batchNumber: batchNumber 
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log(`✅ Batch saved:`, result);
+                    showToastRateLimited(`Batch ${batchNumber} saved (${currentBatch.length} games)`, 'success');
+                    
+                    // Reset batch
+                    currentBatch = [];
+                    batchNumber++;
+                    
+                    // Update dev dashboard
+                    updateDevDashboard();
+                } else {
+                    console.error('Batch save failed:', response.status);
+                    showToastRateLimited('Batch save failed - will retry', 'error');
+                    
+                    // Schedule retry
+                    setTimeout(() => saveBatch(), BATCH_SAVE_DEBOUNCE * 2);
+                }
+            } catch (error) {
+                console.error('Batch save error:', error);
+                showToastRateLimited('Batch save error - saving to localStorage', 'error');
+                
+                // Fallback to localStorage
+                const fallbackKey = `v5_failed_batch_${Date.now()}_${batchNumber}`;
+                localStorage.setItem(fallbackKey, JSON.stringify({
+                    batchNumber: batchNumber,
+                    games: currentBatch,
+                    timestamp: new Date().toISOString(),
+                    error: error.message
+                }));
+                
+                // Still clear the batch to prevent memory bloat
+                currentBatch = [];
+                batchNumber++;
+            } finally {
+                batchSaveInProgress = false;
+            }
+        }
+        
+        // Martingale strategies
+        const strategies = {
+            conservative: { 
+                name: 'Conservative', 
+                sequence: [0.001, 0.002, 0.004, 0.008, 0.016, 0.032, 0.064, 0.128, 0.256, 0.512],
+                maxLoss: 1.023,
+                color: '#28a745'
+            },
+            moderate: { 
+                name: 'Moderate', 
+                sequence: [0.001, 0.003, 0.009, 0.027, 0.081, 0.243, 0.729, 2.187],
+                maxLoss: 3.280,
+                color: '#ffc107'
+            },
+            aggressive: { 
+                name: 'Aggressive', 
+                sequence: [0.001, 0.005, 0.025, 0.125, 0.625, 3.125],
+                maxLoss: 3.906,
+                color: '#dc3545'
+            }
+        };
+        
+        /**
+         * Calculate comprehensive volatility metrics
+         * Based on v2.2 volatility tracking implementation
+         */
+        function calculateVolatilityMetrics(priceHistory, currentPrice) {
+            if (!priceHistory || priceHistory.length < 2) {
+                return {
+                    standardDev: 0,
+                    percentageVol: 0,
+                    priceRange: 0,
+                    avgChange: 0,
+                    maxChange: 0,
+                    acceleration: 0,
+                    status: 'NORMAL'
+                };
+            }
+            
+            // Add current price to calculation
+            const allPrices = [...priceHistory.slice(-VOLATILITY_WINDOW), currentPrice];
+            
+            // 1. Standard deviation of returns
+            const returns = [];
+            for (let i = 1; i < allPrices.length; i++) {
+                if (allPrices[i-1] > 0) { // Prevent division by zero
+                    const change = (allPrices[i] - allPrices[i-1]) / allPrices[i-1];
+                    returns.push(change);
+                }
+            }
+            
+            if (returns.length === 0) {
+                return {
+                    standardDev: 0,
+                    percentageVol: 0,
+                    priceRange: 0,
+                    avgChange: 0,
+                    maxChange: 0,
+                    acceleration: 0,
+                    status: 'NORMAL'
+                };
+            }
+            
+            const avgReturn = returns.reduce((a, b) => a + b, 0) / returns.length;
+            const variance = returns.reduce((sum, r) => sum + Math.pow(r - avgReturn, 2), 0) / returns.length;
+            const standardDev = Math.sqrt(variance);
+            
+            // 2. Percentage volatility (annualized style)
+            const percentageVol = standardDev * Math.sqrt(252); // Assuming 252 trading periods
+            
+            // 3. Price range
+            const minPrice = Math.min(...allPrices);
+            const maxPrice = Math.max(...allPrices);
+            const priceRange = minPrice > 0 ? (maxPrice - minPrice) / minPrice : 0;
+            
+            // 4. Average absolute change
+            const changes = returns.map(Math.abs);
+            const avgChange = changes.reduce((a, b) => a + b, 0) / changes.length;
+            
+            // 5. Maximum change
+            const maxChange = Math.max(...changes);
+            
+            // 6. Acceleration (change in volatility)
+            let acceleration = 0;
+            if (returns.length >= 3) {
+                const recentVol = Math.abs(returns[returns.length - 1]);
+                const prevVol = Math.abs(returns[returns.length - 2]);
+                acceleration = recentVol - prevVol;
+            }
+            
+            // Determine volatility status
+            let status = 'NORMAL';
+            if (standardDev > 0.005) status = 'EXTREME';
+            else if (standardDev > 0.003) status = 'HIGH';
+            else if (standardDev > 0.002) status = 'ELEVATED';
+            
+            return {
+                standardDev: standardDev,
+                percentageVol: percentageVol,
+                priceRange: priceRange,
+                avgChange: avgChange,
+                maxChange: maxChange,
+                acceleration: acceleration,
+                status: status
+            };
+        }
+        
+        // Check server availability on startup
+        async function checkServerConnection() {
+            try {
+                const response = await fetch(`${SAVE_SERVER_URL}/stats`);
+                if (response.ok) {
+                    const wasOffline = !serverAvailable;
+                    serverAvailable = true;
+                    
+                    if (wasOffline) {
+                        showToast('Connected to data save server', 'success');
+                        // Process any pending saves
+                        processPendingSaves();
+                        // Recover any failed batches from localStorage
+                        recoverFailedBatches();
+                    }
+                }
+            } catch (error) {
+                serverAvailable = false;
+                console.log('Data save server not available, using localStorage');
+            }
+        }
+        
+        // Save game to server
+        async function saveGameToServer(gameData) {
+            if (!serverAvailable) {
+                pendingSaves.push(gameData);
+                return false;
+            }
+            
+            try {
+                const response = await fetch(`${SAVE_SERVER_URL}/save-game`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(gameData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Game saved to server:', result);
+                    return true;
+                } else {
+                    throw new Error('Server response not OK');
+                }
+            } catch (error) {
+                console.error('Failed to save to server:', error);
+                serverAvailable = false;
+                pendingSaves.push(gameData);
+                setTimeout(checkServerConnection, 10000); // Retry in 10 seconds
+                return false;
+            }
+        }
+        
+        // Process pending saves
+        async function processPendingSaves() {
+            if (pendingSaves.length === 0 || !serverAvailable) return;
+            
+            const toSave = [...pendingSaves];
+            pendingSaves = [];
+            
+            try {
+                const response = await fetch(`${SAVE_SERVER_URL}/save-batch`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ games: toSave })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    showToast(`Saved ${toSave.length} pending games`, 'success');
+                } else {
+                    pendingSaves.push(...toSave); // Re-queue on failure
+                }
+            } catch (error) {
+                pendingSaves.push(...toSave); // Re-queue on failure
+            }
+        }
+        
+        // Recover failed batches from localStorage
+        function recoverFailedBatches() {
+            const recoveredGames = [];
+            const keysToRemove = [];
+            
+            for (let key in localStorage) {
+                if (key.startsWith('v5_failed_batch_')) {
+                    try {
+                        const data = JSON.parse(localStorage.getItem(key));
+                        if (data.games && Array.isArray(data.games)) {
+                            recoveredGames.push(...data.games);
+                            keysToRemove.push(key);
+                        }
+                    } catch (error) {
+                        console.error(`Failed to recover batch ${key}:`, error);
+                    }
+                }
+            }
+            
+            if (recoveredGames.length > 0) {
+                console.log(`Recovered ${recoveredGames.length} games from failed batches`);
+                // Add to pending saves to be processed
+                pendingSaves.push(...recoveredGames);
+                processPendingSaves();
+                
+                // Clean up localStorage
+                keysToRemove.forEach(key => localStorage.removeItem(key));
+            }
+        }
+        
+        // Data loading function
+        async function loadHistoricalData() {
+            try {
+                // First try to load from server
+                if (serverAvailable) {
+                    const response = await fetch(`${SAVE_SERVER_URL}/load-history`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.games && data.games.length > 0) {
+                            gameHistory = data.games.slice(-100); // Keep only last 100
+                            statsData = calculateStats(gameHistory);
+                            totalGamesCollected = data.totalGamesCollected || gameHistory.length;
+                            showToast(`Loaded ${gameHistory.length} games from server (Total: ${totalGamesCollected})`, 'success');
+                            
+                            // Also update localStorage as backup with minimal data
+                            const minimalGames = gameHistory.map(g => ({
+                                startTime: g.startTime,
+                                endTime: g.endTime,
+                                duration: g.duration,
+                                peakMultiplier: g.peakMultiplier || g.peakPrice || 1,
+                                timestamp: g.timestamp
+                            }));
+                            const dataToSave = {
+                                games: minimalGames,
+                                lastUpdated: new Date().toISOString(),
+                                version: 'v5_mobile',
+                                totalGamesCollected: totalGamesCollected
+                            };
+                            try {
+                                localStorage.setItem('v5_rolling_100_games', JSON.stringify(dataToSave));
+                            } catch (e) {
+                                console.warn('localStorage quota exceeded, skipping backup');
+                            }
+                            return;
+                        }
+                    }
+                }
+                
+                // Fallback to localStorage
+                const stored = localStorage.getItem('v5_rolling_100_games');
+                if (stored) {
+                    const data = JSON.parse(stored);
+                    if (data && data.games && data.games.length > 0) {
+                        gameHistory = data.games.slice(-100); // Keep only last 100
+                        totalGamesCollected = data.totalGamesCollected || gameHistory.length;
+                        statsData = calculateStats(gameHistory);
+                        showToast(`Loaded ${gameHistory.length} historical games from cache (Total: ${totalGamesCollected})`, 'info');
+                        return;
+                    }
+                }
+                
+                // No data found, use baseline
+                showToast('Using baseline data. Stats improve as games are played.', 'info');
+            } catch (error) {
+                console.error('Error loading historical data:', error);
+                showToast('Using baseline data', 'warning');
+            }
+        }
+        
+        // Data saving function
+        function saveGameData() {
+            try {
+                // Save rolling 100 games with minimal data
+                const minimalGames = gameHistory.slice(-100).map(g => ({
+                    startTime: g.startTime,
+                    endTime: g.endTime,
+                    duration: g.duration,
+                    peakMultiplier: g.peakMultiplier || g.peakPrice || 1,
+                    timestamp: g.timestamp
+                }));
+                const dataToSave = {
+                    games: minimalGames,
+                    lastUpdated: new Date().toISOString(),
+                    version: 'v5_mobile',
+                    totalGamesCollected: totalGamesCollected
+                };
+                try {
+                    localStorage.setItem('v5_rolling_100_games', JSON.stringify(dataToSave));
+                } catch (e) {
+                    console.warn('localStorage quota exceeded, skipping backup');
+                }
+                
+                // Save current stats
+                localStorage.setItem('v5_current_stats', JSON.stringify(statsData));
+                
+                // Save batch if needed (every 50 games)
+                if (currentBatch.length >= 50) {
+                    const batchKey = `v5_batch_${Date.now()}_${batchNumber}`;
+                    localStorage.setItem(batchKey, JSON.stringify({
+                        batchNumber: batchNumber,
+                        games: currentBatch,
+                        timestamp: new Date().toISOString()
+                    }));
+                    
+                    currentBatch = []; // Reset batch
+                    batchNumber++;
+                    showToast('Batch data saved (50 games)', 'success');
+                }
+            } catch (error) {
+                console.error('Error saving data:', error);
+            }
+        }
+        
+        // Statistical calculation with intelligent blending
+        function calculateStats(games) {
+            if (!games || games.length === 0) {
+                return {...BASELINE_STATS, lastUpdated: new Date().toISOString()};
+            }
+            
+            const durations = games.map(g => g.duration).sort((a, b) => a - b);
+            const n = durations.length;
+            
+            // For small samples, blend with baseline
+            if (n < 20) {
+                // Use baseline but indicate we have some data
+                return {
+                    ...BASELINE_STATS,
+                    confidence: 'baseline',
+                    gamesAnalyzed: n,
+                    lastUpdated: new Date().toISOString(),
+                    source: 'baseline_with_limited_data'
+                };
+            }
+            
+            // Calculate actual statistics
+            const sum = durations.reduce((a, b) => a + b, 0);
+            const mean = sum / n;
+            
+            const median = n % 2 === 0 
+                ? (durations[n/2 - 1] + durations[n/2]) / 2 
+                : durations[Math.floor(n/2)];
+            
+            const variance = durations.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / n;
+            const std = Math.sqrt(variance);
+            
+            const getPercentile = (p) => {
+                const index = Math.ceil(n * p / 100) - 1;
+                return durations[Math.max(0, Math.min(index, n - 1))];
+            };
+            
+            // Create calculated stats
+            const calculatedStats = {
+                mean: mean,
+                median: median,
+                std: std,
+                percentiles: {
+                    p25: getPercentile(25),
+                    p50: median,
+                    p75: getPercentile(75),
+                    p90: getPercentile(90),
+                    p95: getPercentile(95)
+                }
+            };
+            
+            // Blend with baseline for 20-99 games
+            if (n < 100) {
+                const weight = n / 100; // 0.2 to 0.99
+                const blendedStats = {
+                    mean: calculatedStats.mean * weight + BASELINE_STATS.mean * (1 - weight),
+                    median: calculatedStats.median * weight + BASELINE_STATS.median * (1 - weight),
+                    std: calculatedStats.std * weight + BASELINE_STATS.std * (1 - weight),
+                    percentiles: {
+                        p25: Math.round(calculatedStats.percentiles.p25 * weight + BASELINE_STATS.percentiles.p25 * (1 - weight)),
+                        p50: Math.round(calculatedStats.median * weight + BASELINE_STATS.median * (1 - weight)),
+                        p75: Math.round(calculatedStats.percentiles.p75 * weight + BASELINE_STATS.percentiles.p75 * (1 - weight)),
+                        p90: Math.round(calculatedStats.percentiles.p90 * weight + BASELINE_STATS.percentiles.p90 * (1 - weight)),
+                        p95: Math.round(calculatedStats.percentiles.p95 * weight + BASELINE_STATS.percentiles.p95 * (1 - weight))
+                    },
+                    confidence: n >= 50 ? 'historical' : 'partial',
+                    gamesAnalyzed: n,
+                    lastUpdated: new Date().toISOString(),
+                    source: 'blended',
+                    blendWeight: weight
+                };
+                return blendedStats;
+            }
+            
+            // 100+ games: use pure calculated stats
+            return {
+                ...calculatedStats,
+                confidence: 'full',
+                gamesAnalyzed: n,
+                lastUpdated: new Date().toISOString(),
+                source: 'calculated'
+            };
+        }
+        
+        // Connect to WebSocket
+        const socket = io('https://backend.rugs.fun', {
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+            transports: ['websocket', 'polling'],
+            timeout: 10000
+        });
+        
+        // Socket event handlers
+        socket.on('connect', () => {
+            gameData.connected = true;
+            updateValues();
+            
+            // Load historical data on first connect
+            if (gameHistory.length === 0) {
+                loadHistoricalData();
+            }
+        });
+        
+        socket.on('disconnect', () => {
+            gameData.connected = false;
+            updateValues();
+        });
+        
+        // Debug: Log ALL events to see what we're actually receiving
+        socket.onAny((eventName, ...args) => {
+            console.log(`📡 Event: ${eventName}`, args);
+        });
+        
+        socket.on('gameStateUpdate', (data) => {
+            // Debug log to see what data we're getting
+            if (data.tickCount && data.tickCount % 50 === 0) {
+                console.log('Game state data:', data);
+            }
+            
+            // Check if game just ended (cooldown started)
+            if (data.cooldownTimer > 0 && currentGame && gameData.gameActive) {
+                console.log('🎲 Game ended - cooldown detected');
+                
+                const completedGame = {
+                    ...currentGame,
+                    endTime: new Date().toISOString(),
+                    duration: gameData.tickIndex,
+                    endPrice: gameData.currentPrice,
+                    ruggedAt: gameData.tickIndex,
+                    peakPrice: currentGame.peakPrice || gameData.currentPrice,
+                    timestamp: Date.now(),
+                    volatilityMetrics: currentGame.currentVolatility ? {
+                        finalVolatility: currentGame.currentVolatility,
+                        avgVolatility: currentGame.volatilityHistory.length > 0 ?
+                            currentGame.volatilityHistory.reduce((sum, v) => sum + v.standardDev, 0) / currentGame.volatilityHistory.length : 0,
+                        maxVolatility: currentGame.volatilityHistory.length > 0 ?
+                            Math.max(...currentGame.volatilityHistory.map(v => v.standardDev)) : 0,
+                        volatilitySpike: currentGame.volatilityHistory.length > 10 ?
+                            Math.max(...currentGame.volatilityHistory.slice(-10).map(v => v.standardDev)) / 
+                            Math.max(...currentGame.volatilityHistory.slice(0, 10).map(v => v.standardDev)) : 1
+                    } : null
+                };
+                
+                // Add to history and batch
+                gameHistory.push(completedGame);
+                currentBatch.push(completedGame);
+                totalGamesCollected++;  // Increment total counter
+                
+                // Check if batch is full (exactly 50 games)
+                if (currentBatch.length >= 50) {
+                    // Validate batch size
+                    if (currentBatch.length > 50) {
+                        console.warn(`⚠️ Batch overflow detected: ${currentBatch.length} games. Trimming to 50.`);
+                        const overflow = currentBatch.splice(50);
+                        // Add overflow back to beginning of next batch
+                        setTimeout(() => {
+                            currentBatch.unshift(...overflow);
+                            updateDevDashboard();
+                        }, 100);
+                    }
+                    console.log(`📦 Batch ${batchNumber} complete with 50 games. Saving...`);
+                    saveBatch();
+                }
+                
+                // Update survival calculator
+                survivalCalc.recordGameCompletion(completedGame.duration, completedGame.peakMultiplier);
+                
+                // Check recommendation outcome
+                checkRecommendationOutcome(completedGame.duration);
+                
+                // Keep only last 100 games in memory
+                if (gameHistory.length > 100) {
+                    gameHistory = gameHistory.slice(-100);
+                }
+                
+                // Recalculate stats
+                statsData = calculateStats(gameHistory);
+                
+                // Save data - BOTH to server and localStorage
+                saveGameData();
+                
+                // Also save to server immediately
+                saveGameToServer(completedGame);
+                
+                console.log(`📊 Game ended - Duration: ${completedGame.duration} ticks, Peak: ${completedGame.peakPrice.toFixed(2)}x`);
+                console.log(`📈 Stats updated - Games: ${gameHistory.length}, Mean: ${statsData.mean.toFixed(1)}, Median: ${statsData.median}`);
+                
+                // Update dashboard immediately
+                updateDevDashboard();
+                
+                // Reset for next game
+                currentGame = null;
+                gameData.gameActive = false;
+                
+                // If session was active, it's a loss (game ended)
+                if (sessionData.active) {
+                    showToast(`Game ended! Session stopped. Loss: ${sessionData.totalRisked.toFixed(3)} SOL`, 'error');
+                    sessionData.active = false;
+                    needsSessionUpdate = true;
+                    needsStrategyUpdate = true;
+                }
+            }
+            
+            // Use correct field names from terminal version
+            if (data.tickCount !== undefined) {
+                gameData.tickIndex = data.tickCount;
+                gameData.cooldownTimer = data.cooldownTimer || 0;
+                gameData.gameActive = data.active === true && data.cooldownTimer === 0;
+                
+                // Determine game phase
+                if (data.cooldownTimer > 10000) {
+                    gameData.gamePhase = 'RUGGED';
+                } else if (data.cooldownTimer > 100) {
+                    gameData.gamePhase = 'PRESALE';
+                } else if (gameData.gameActive) {
+                    gameData.gamePhase = 'ACTIVE';
+                } else {
+                    gameData.gamePhase = 'WAITING';
+                }
+                
+                // Start tracking new game (detect when tick resets to low number)
+                if (gameData.gameActive && !currentGame && data.tickCount < 10) {
+                    currentGame = {
+                        startTime: new Date().toISOString(),
+                        startTick: data.tickCount,
+                        priceHistory: [data.price || 1.0],
+                        peakPrice: data.price || 1.0,
+                        volatilityHistory: [],
+                        currentVolatility: null
+                    };
+                    console.log('🎮 Game started - tracking data... Tick:', data.tickCount);
+                }
+                
+                // Update current game data
+                if (currentGame && gameData.gameActive) {
+                    currentGame.priceHistory.push(data.price || gameData.currentPrice);
+                    if (data.price > currentGame.peakPrice) {
+                        currentGame.peakPrice = data.price;
+                    }
+                    
+                    // Calculate volatility metrics
+                    if (currentGame.priceHistory.length >= 2) {
+                        const volatility = calculateVolatilityMetrics(currentGame.priceHistory, data.price);
+                        currentGame.currentVolatility = volatility;
+                        currentGame.volatilityHistory.push({
+                            tick: data.tickCount,
+                            ...volatility
+                        });
+                    }
+                }
+            }
+            if (data.price !== undefined) {
+                gameData.currentPrice = data.price;
+            }
+            // Update volatility from current game
+            if (currentGame && currentGame.currentVolatility) {
+                gameData.volatility = (currentGame.currentVolatility.percentageVol * 100).toFixed(1);
+            } else {
+                gameData.volatility = 0; // No volatility data yet
+            }
+            updateValues();
+        });
+        
+        // Note: Game end is detected in gameStateUpdate when cooldownTimer > 0
+        
+        // UI Functions
+        function createHeaderHTML() {
+            return `
+                <div class="header">
+                    <h1>🎯 Martingale Assistant</h1>
+                    <div class="connection-status ${gameData.connected ? 'status-connected' : ''}">
+                        <span class="status-dot"></span>
+                        ${gameData.connected ? 'Connected' : 'Disconnected'}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function createGameStatusHTML() {
+            return `
+                <div class="game-status">
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">${gameData.tickIndex}</div>
+                            <div class="stat-label">Tick</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${gameData.currentPrice.toFixed(2)}x</div>
+                            <div class="stat-label">Price</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${gameData.volatility.toFixed(1)}%</div>
+                            <div class="stat-label">Volatility</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function createStatsHTML() {
+            const position = ((gameData.tickIndex / statsData.median) * 100).toFixed(0);
+            const positionWidth = Math.min(position, 100);
+            
+            let entryZone = 'WAITING';
+            let zoneClass = 'waiting';
+            let confidence = 0;
+            
+            // Dynamic zones based on percentiles
+            const p25 = statsData.percentiles.p25;
+            const p75 = statsData.percentiles.p75;
+            
+            if (gameData.tickIndex > 0 && gameData.tickIndex < p25) {
+                entryZone = 'EARLY ZONE';
+                zoneClass = 'early';
+                // TODO: Calculate actual confidence from hit rates
+                confidence = statsData.confidence === 'baseline' ? 70 : Math.round(70 * (statsData.gamesAnalyzed / 100));
+            } else if (gameData.tickIndex >= p25 && gameData.tickIndex <= p75) {
+                entryZone = 'PRIME ZONE';
+                zoneClass = 'prime';
+                confidence = statsData.confidence === 'baseline' ? 85 : Math.round(85 * (statsData.gamesAnalyzed / 100));
+            } else if (gameData.tickIndex > p75) {
+                entryZone = 'LATE ZONE';
+                zoneClass = 'late';
+                confidence = statsData.confidence === 'baseline' ? 90 : Math.round(90 * (statsData.gamesAnalyzed / 100));
+            }
+            
+            return `
+                <div class="stats-section">
+                    <h3>📊 Statistical Analysis</h3>
+                    <div>Position: ${position}% of median (${gameData.tickIndex}/${statsData.median})</div>
+                    <div class="position-bar">
+                        <div class="position-indicator" style="width: ${positionWidth}%"></div>
+                    </div>
+                    <div class="entry-zone ${zoneClass}">
+                        ${entryZone} ${confidence > 0 ? `- ${confidence}% Confidence` : ''}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function createStrategySelectionHTML() {
+            if (sessionData.active) return '';
+            
+            return `
+                <div class="strategy-section">
+                    <h3>🎯 Strategy Selection</h3>
+                    <div class="strategy-buttons">
+                        ${Object.entries(strategies).map(([key, strategy]) => `
+                            <button class="btn strategy-btn ${sessionData.strategy === key ? 'active' : ''}"
+                                    onclick="selectStrategy('${key}')">
+                                <div class="strategy-name">${strategy.name}</div>
+                                <div class="strategy-bet">${strategy.sequence[0]} SOL</div>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function createSessionControlsHTML() {
+            if (!sessionData.active) {
+                return `
+                    <div class="session-controls">
+                        <button class="btn btn-primary" onclick="startSession()">
+                            🚀 Start ${strategies[sessionData.strategy].name} Session
+                        </button>
+                    </div>
+                `;
+            }
+            
+            const strategy = strategies[sessionData.strategy];
+            const nextBet = strategy.sequence[sessionData.currentBet - 1] || strategy.sequence[0];
+            const potentialPayout = nextBet * 5;
+            const netProfit = potentialPayout - (sessionData.totalRisked + nextBet);
+            const ticksElapsed = gameData.tickIndex - sessionData.startTick;
+            
+            return `
+                <div class="active-session">
+                    <h3>🎯 Active ${strategy.name} Session</h3>
+                    
+                    <div class="session-info">
+                        <div class="session-stat">
+                            <div class="session-stat-label">Bet #</div>
+                            <div class="session-stat-value">${sessionData.currentBet}</div>
+                        </div>
+                        <div class="session-stat">
+                            <div class="session-stat-label">Risked</div>
+                            <div class="session-stat-value">${sessionData.totalRisked.toFixed(3)}</div>
+                        </div>
+                        <div class="session-stat">
+                            <div class="session-stat-label">Start Tick</div>
+                            <div class="session-stat-value">${sessionData.startTick}</div>
+                        </div>
+                        <div class="session-stat">
+                            <div class="session-stat-label">Elapsed</div>
+                            <div class="session-stat-value">${ticksElapsed}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="next-bet">
+                        <div class="bet-amount">Next: ${nextBet} SOL</div>
+                        <div class="potential">Payout: ${potentialPayout.toFixed(3)} SOL</div>
+                        <div class="profit">Profit if won: +${netProfit.toFixed(3)} SOL</div>
+                    </div>
+                    
+                    <div class="bet-controls">
+                        <button class="btn btn-success" onclick="recordBet(true)">✅ Won</button>
+                        <button class="btn btn-danger" onclick="recordBet(false)">❌ Lost</button>
+                        <button class="btn btn-warning" onclick="stopSession()">⏹️ Stop</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Removed updateDisplay() - now using update flags instead
+        
+        // Session management functions
+        function selectStrategy(strategy) {
+            if (!sessionData.active && sessionData.strategy !== strategy) {
+                sessionData.strategy = strategy;
+                needsStrategyUpdate = true;
+                // Don't call updateDisplay() - let the next updateValues() handle it
+            }
+        }
+        
+        function startSession() {
+            if (gameData.tickIndex < 40) {
+                showToast('Too early! Wait until tick 40+ to avoid instant rugs.', 'warning');
+                return;
+            }
+            
+            sessionData.active = true;
+            sessionData.currentBet = 1;
+            sessionData.totalRisked = 0;
+            sessionData.betHistory = [];
+            sessionData.startTick = gameData.tickIndex;
+            needsSessionUpdate = true;
+            needsStrategyUpdate = true;  // Hide strategy selection when session starts
+        }
+        
+        function recordBet(won) {
+            const strategy = strategies[sessionData.strategy];
+            const betAmount = strategy.sequence[sessionData.currentBet - 1] || strategy.sequence[0];
+            
+            sessionData.betHistory.push({
+                bet: sessionData.currentBet,
+                amount: betAmount,
+                won: won,
+                tick: gameData.tickIndex
+            });
+            
+            if (won) {
+                const payout = betAmount * 5;
+                const profit = payout - (sessionData.totalRisked + betAmount);
+                showToast(`Session Won! Profit: +${profit.toFixed(3)} SOL`, 'success');
+                sessionData.active = false;
+            } else {
+                sessionData.totalRisked += betAmount;
+                sessionData.currentBet++;
+                
+                // Check if we've exhausted the sequence
+                if (sessionData.currentBet > strategy.sequence.length) {
+                    showToast(`Session Lost! Total Loss: ${sessionData.totalRisked.toFixed(3)} SOL`, 'error');
+                    sessionData.active = false;
+                }
+            }
+            
+            needsSessionUpdate = true;
+            if (!sessionData.active) {
+                needsStrategyUpdate = true;  // Show strategy selection again if session ended
+            }
+        }
+        
+        function stopSession() {
+            if (sessionData.active && sessionData.totalRisked > 0) {
+                showToast(`Session stopped. Loss: ${sessionData.totalRisked.toFixed(3)} SOL`, 'warning');
+            }
+            sessionData.active = false;
+            needsSessionUpdate = true;
+            needsStrategyUpdate = true;  // Show strategy selection when session stops
+        }
+        
+        // Create initial page structure (only once)
+        function createInitialStructure() {
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <div class="header">
+                    <h1>🎯 Martingale Assistant</h1>
+                    <div class="connection-status" id="connection-status">
+                        <span class="status-dot"></span>
+                        <span id="connection-text">Disconnected</span>
+                    </div>
+                </div>
+                
+                <div class="game-status">
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="tick-value">0</div>
+                            <div class="stat-label">Tick</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="price-value">1.00x</div>
+                            <div class="stat-label">Price</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="volatility-value">7.5%</div>
+                            <div class="stat-label">Volatility</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-section">
+                    <h3>📊 Statistical Analysis</h3>
+                    <div id="survival-text">Survival Rate: 100.0% remain at tick 0</div>
+                    <div class="survival-bar">
+                        <div class="survival-indicator" id="survival-bar" style="width: 0%"></div>
+                        <div class="milestone-markers">
+                            <div class="marker" style="left: 20%">100</div>
+                            <div class="marker" style="left: 40%">200</div>
+                            <div class="marker" style="left: 60%">300</div>
+                            <div class="marker" style="left: 80%">400</div>
+                            <div class="marker" style="left: 95%">500</div>
+                        </div>
+                    </div>
+                    
+                    <div class="adaptive-targets" id="adaptive-targets">
+                        <h4>Probability Targets</h4>
+                        <div class="target-grid" id="target-grid">
+                            <div class="target-row">
+                                <span>Loading...</span>
+                                <span class="target-prob">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="risk-assessment" id="risk-assessment">
+                        <div class="risk-header">
+                            <span>Risk Level: <span id="risk-level">CALCULATING</span></span>
+                            <span class="confidence" id="risk-confidence">-- confidence</span>
+                        </div>
+                        <div class="risk-factors" id="risk-factors">
+                            <span class="risk-factor">Duration: --</span>
+                            <span class="risk-factor">Volatility: --</span>
+                            <span class="risk-factor">Rug Risk: --</span>
+                            <span class="risk-factor">Survival: --</span>
+                        </div>
+                    </div>
+                    
+                    <div class="post500-indicator" id="post500-indicator" style="display: none;">
+                        <span class="post500-label">Post-500 Sequence:</span>
+                        <span class="post500-value" id="post500-value">Not Active</span>
+                    </div>
+                    
+                    <div class="probability-zone-indicator" id="zone-indicator" style="display: none;">
+                        <div class="zone-header">
+                            <span class="zone-label">Probability Zone:</span>
+                            <span class="zone-name" id="zone-name">-</span>
+                        </div>
+                        <div class="zone-bar">
+                            <div class="zone-segment avoid" style="width: 10%;">10%</div>
+                            <div class="zone-segment danger" style="width: 5%;">15%</div>
+                            <div class="zone-segment breakeven" style="width: 5%;">20%</div>
+                            <div class="zone-segment profit" style="width: 10%;">30%</div>
+                            <div class="zone-segment high-profit" style="width: 20%;">50%</div>
+                            <div class="zone-segment certainty" style="width: 50%;">100%</div>
+                            <div class="zone-marker" id="zone-marker" style="left: 0%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="strategy-recommendation">
+                        <div class="recommendation-box hold" id="recommendation-box">
+                            <span id="recommendation-text">ANALYZING...</span>
+                            <div class="details" id="recommendation-details">
+                                Gathering data for strategic analysis
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="strategy-container"></div>
+                <div id="session-container"></div>
+                
+                <div class="status-footer">
+                    Last updated: <span id="last-update">${new Date().toLocaleTimeString()}</span>
+                </div>
+            `;
+            
+            // Initial update
+            updateValues();
+        }
+        
+        // Update only the values, not the structure
+        function updateValues() {
+            // Update connection status
+            const connStatus = document.getElementById('connection-status');
+            const connText = document.getElementById('connection-text');
+            const statusDot = connStatus.querySelector('.status-dot');
+            
+            if (gameData.connected) {
+                connStatus.classList.add('status-connected');
+                connText.textContent = 'Connected';
+            } else {
+                connStatus.classList.remove('status-connected');
+                connText.textContent = 'Disconnected';
+            }
+            
+            // Update game values
+            document.getElementById('tick-value').textContent = gameData.tickIndex;
+            document.getElementById('price-value').textContent = gameData.currentPrice.toFixed(2) + 'x';
+            
+            // Update volatility display with dynamic calculation
+            let volatilityPercent = 0;
+            let volatilityStatus = 'LOW';
+            if (currentGame && currentGame.currentVolatility) {
+                volatilityPercent = currentGame.currentVolatility.percentageVol * 100;
+                
+                // Color code based on volatility level
+                const volElement = document.getElementById('volatility-value');
+                if (currentGame.currentVolatility.standardDev > 0.005) {
+                    volatilityStatus = 'EXTREME';
+                    volElement.style.color = '#ff4444';
+                } else if (currentGame.currentVolatility.standardDev > 0.003) {
+                    volatilityStatus = 'HIGH';
+                    volElement.style.color = '#ffaa44';
+                } else if (currentGame.currentVolatility.standardDev > 0.002) {
+                    volatilityStatus = 'ELEVATED';
+                    volElement.style.color = '#ffff44';
+                } else {
+                    volElement.style.color = '#44ff44';
+                }
+            }
+            document.getElementById('volatility-value').textContent = volatilityPercent.toFixed(1) + '%';
+            
+            // Update survival probability display
+            const survivalContext = survivalCalc.calculateSurvivalContext(
+                gameData.tickIndex, 
+                currentGame && currentGame.currentVolatility ? currentGame.currentVolatility.standardDev : null
+            );
+            
+            document.getElementById('survival-text').textContent = survivalContext.displayText;
+            document.getElementById('survival-bar').style.width = survivalContext.logPosition + '%';
+            
+            // Update adaptive milestones
+            const milestones = survivalCalc.getAdaptiveMilestones(gameData.tickIndex);
+            updateAdaptiveTargets(milestones);
+            
+            // Check if game is active before getting strategic recommendation
+            if (gameData.gamePhase === 'ACTIVE' && gameData.gameActive) {
+                // Get strategic recommendation for active game
+                const peakMultiplier = currentGame && currentGame.peakPrice ? currentGame.peakPrice : gameData.currentPrice;
+                const recommendation = survivalCalc.getStrategicRecommendationWithZones(
+                    gameData.tickIndex,
+                    currentGame && currentGame.currentVolatility ? currentGame.currentVolatility.standardDev : null,
+                    peakMultiplier
+                );
+                
+                // Update risk assessment
+                updateRiskAssessment(recommendation);
+                
+                // Track recommendation for accuracy measurement
+                trackRecommendation(recommendation);
+                
+                // Update recommendation box
+                updateRecommendation(recommendation);
+            } else {
+                // For non-active phases, just update the recommendation box
+                // The updateRecommendation function will handle showing the appropriate phase status
+                updateRecommendation({});
+            }
+            
+            // REMOVED - Entry zone logic now handled by risk assessment and recommendations
+            
+            // Update strategy container only when needed
+            if (needsStrategyUpdate || lastRenderedStrategy !== sessionData.strategy) {
+                const strategyHTML = createStrategySelectionHTML();
+                const strategyContainer = document.getElementById('strategy-container');
+                strategyContainer.innerHTML = strategyHTML;
+                lastRenderedStrategy = sessionData.strategy;
+                needsStrategyUpdate = false;
+            }
+            
+            // Update session container only when needed
+            if (needsSessionUpdate || lastSessionActive !== sessionData.active) {
+                const sessionHTML = createSessionControlsHTML();
+                const sessionContainer = document.getElementById('session-container');
+                sessionContainer.innerHTML = sessionHTML;
+                lastSessionActive = sessionData.active;
+                needsSessionUpdate = false;
+            }
+            
+            // Update session values directly if session is active (without replacing HTML)
+            if (sessionData.active && !needsSessionUpdate) {
+                // Update only the text content of specific elements
+                const betNumElement = document.querySelector('.session-stat-value');
+                if (betNumElement) {
+                    const elems = document.querySelectorAll('.session-stat-value');
+                    if (elems[0]) elems[0].textContent = sessionData.currentBet;
+                    if (elems[1]) elems[1].textContent = sessionData.totalRisked.toFixed(3);
+                    if (elems[2]) elems[2].textContent = sessionData.startTick;
+                    if (elems[3]) elems[3].textContent = gameData.tickIndex - sessionData.startTick;
+                }
+                
+                // Update next bet info
+                const strategy = strategies[sessionData.strategy];
+                const nextBet = strategy.sequence[sessionData.currentBet - 1] || strategy.sequence[0];
+                const potentialPayout = nextBet * 5;
+                const netProfit = potentialPayout - (sessionData.totalRisked + nextBet);
+                
+                const betAmountElem = document.querySelector('.bet-amount');
+                const payoutElem = document.querySelector('.potential');
+                const profitElem = document.querySelector('.profit');
+                
+                if (betAmountElem) betAmountElem.textContent = `Next: ${nextBet} SOL`;
+                if (payoutElem) payoutElem.textContent = `Payout: ${potentialPayout.toFixed(3)} SOL`;
+                if (profitElem) profitElem.textContent = `Profit if won: +${netProfit.toFixed(3)} SOL`;
+            }
+            
+            // Update timestamp
+            document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+            
+            // Update cooldown overlay
+            updateCooldownOverlay();
+        }
+        
+        // Create initial structure once
+        createInitialStructure();
+        
+        // Check server connection on startup
+        checkServerConnection();
+        
+        // Update only values, not entire page
+        setInterval(updateValues, 1000);
+        
+        // Prevent accidental navigation
+        window.addEventListener('beforeunload', (e) => {
+            if (sessionData.active) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+        
+        // Developer Dashboard Functions
+        let devDashboardOpen = false;
+        let tapCount = 0;
+        let tapTimer = null;
+        
+        // Toggle dashboard
+        function toggleDevDashboard() {
+            devDashboardOpen = !devDashboardOpen;
+            const dashboard = document.getElementById('dev-dashboard');
+            
+            if (devDashboardOpen) {
+                console.log('Opening enhanced dev dashboard');
+                dashboard.classList.add('show');
+                
+                // Initialize enhanced features if not already done
+                initMartingaleManager();
+                
+                // Start enhanced updates
+                updateDevDashboard();
+                updateEnhancedDashboard();
+                
+                // Start interval for continuous updates
+                if (!enhancedDashboardInterval) {
+                    enhancedDashboardInterval = setInterval(updateEnhancedDashboard, 100);
+                }
+            } else {
+                console.log('Closing enhanced dev dashboard');
+                dashboard.classList.remove('show');
+                
+                // Stop enhanced updates
+                if (enhancedDashboardInterval) {
+                    clearInterval(enhancedDashboardInterval);
+                    enhancedDashboardInterval = null;
+                }
+            }
+        }
+        
+        // Update dashboard values
+        function updateDevDashboard() {
+            if (!devDashboardOpen) return;
+            
+            // Helper function to safely update element
+            function safeUpdate(id, value) {
+                const elem = document.getElementById(id);
+                if (elem) elem.textContent = value;
+            }
+            
+            // Data collection status
+            safeUpdate('dev-games', `${gameHistory.length}/100`);
+            safeUpdate('dev-total-games', totalGamesCollected.toString());
+            safeUpdate('dev-confidence', statsData.confidence);
+            
+            if (gameHistory.length > 0) {
+                const lastGame = gameHistory[gameHistory.length - 1];
+                safeUpdate('dev-last-game', `${lastGame.duration} ticks`);
+            }
+            
+            const batchProgress = currentBatch.length;
+            safeUpdate('dev-save-countdown', `${batchProgress}/50`);
+            
+            // Statistics
+            safeUpdate('dev-mean', statsData.mean ? statsData.mean.toFixed(1) : '-');
+            safeUpdate('dev-median', statsData.median || '-');
+            safeUpdate('dev-std', statsData.std ? statsData.std.toFixed(1) : '-');
+            safeUpdate('dev-quartiles', statsData.percentiles ? `${statsData.percentiles.p25}/${statsData.percentiles.p75}` : '-/-');
+            
+            // Current game
+            safeUpdate('dev-tick', gameData.tickIndex);
+            safeUpdate('dev-price', gameData.currentPrice.toFixed(2) + 'x');
+            safeUpdate('dev-peak', currentGame && currentGame.peakPrice ? currentGame.peakPrice.toFixed(2) + 'x' : '-');
+            safeUpdate('dev-status', gameData.gameActive ? 'Active' : 'Waiting');
+            
+            // Volatility info
+            if (currentGame && currentGame.currentVolatility) {
+                safeUpdate('dev-volatility', (currentGame.currentVolatility.percentageVol * 100).toFixed(1) + '%');
+                safeUpdate('dev-vol-status', currentGame.currentVolatility.status);
+                
+                const volStatusElem = document.getElementById('dev-vol-status');
+                if (volStatusElem) {
+                    switch(currentGame.currentVolatility.status) {
+                    case 'EXTREME':
+                        volStatusElem.style.color = '#ff4444';
+                        break;
+                    case 'HIGH':
+                        volStatusElem.style.color = '#ffaa44';
+                        break;
+                    case 'ELEVATED':
+                        volStatusElem.style.color = '#ffff44';
+                        break;
+                    default:
+                        volStatusElem.style.color = '#44ff44';
+                    }
+                }
+            } else {
+                safeUpdate('dev-volatility', '-');
+                safeUpdate('dev-vol-status', '-');
+            }
+            
+            // Post-500 sequence status
+            const post500Context = survivalCalc.getPost500Context();
+            const post500Text = post500Context.inSequence ? 
+                `Game ${post500Context.position}/3 (${post500Context.riskLevel})` : 
+                'Not in sequence';
+            
+            // Add or update post-500 status if not exists
+            let post500Stat = document.getElementById('dev-post500');
+            if (!post500Stat) {
+                // Find the current game section
+                const devTickElem = document.getElementById('dev-tick');
+                const currentGameSection = devTickElem ? devTickElem.closest('.dev-section') : null;
+                if (currentGameSection) {
+                    const newStat = document.createElement('div');
+                    newStat.className = 'dev-stat';
+                    newStat.innerHTML = `
+                        <span class="dev-stat-label">Post-500:</span>
+                        <span class="dev-stat-value" id="dev-post500">${post500Text}</span>
+                    `;
+                    currentGameSection.appendChild(newStat);
+                }
+            } else if (post500Stat) {
+                post500Stat.textContent = post500Text;
+            }
+            
+            // Recommendation tracking stats
+            let recStat = document.getElementById('dev-recommendations');
+            if (!recStat) {
+                // Find the statistics section
+                const devMeanElem = document.getElementById('dev-mean');
+                const statsSection = devMeanElem ? devMeanElem.closest('.dev-section') : null;
+                if (statsSection) {
+                    const newStat = document.createElement('div');
+                    newStat.className = 'dev-stat';
+                    newStat.innerHTML = `
+                        <span class="dev-stat-label">Recommendations:</span>
+                        <span class="dev-stat-value" id="dev-recommendations">-</span>
+                    `;
+                    statsSection.appendChild(newStat);
+                }
+            }
+            
+            if (recommendationHistory.length > 0) {
+                const recent = recommendationHistory.slice(-50);  // Last 50 recommendations
+                const correct40 = recent.filter(r => r.outcome && r.outcome.correctPrediction).length;
+                const total = recent.length;
+                const accuracy = ((correct40 / total) * 100).toFixed(1);
+                
+                // Calculate accuracy for different windows
+                const within40 = recent.filter(r => r.outcome && 
+                    ((r.recommendation === 'EXIT' || r.recommendation === 'REDUCE') && r.outcome.within40)).length;
+                const within70 = recent.filter(r => r.outcome && 
+                    ((r.recommendation === 'EXIT' || r.recommendation === 'REDUCE') && r.outcome.within70)).length;
+                
+                const exitCount = recent.filter(r => r.recommendation === 'EXIT' || r.recommendation === 'REDUCE').length;
+                const acc40 = exitCount > 0 ? ((within40 / exitCount) * 100).toFixed(1) : 0;
+                const acc70 = exitCount > 0 ? ((within70 / exitCount) * 100).toFixed(1) : 0;
+                
+                safeUpdate('dev-recommendations', `${accuracy}% (40t: ${acc40}%, 70t: ${acc70}%) [${total}]`);
+            } else {
+                safeUpdate('dev-recommendations', 'No data yet');
+            }
+            
+            // Server status
+            const serverStatusElem = document.getElementById('dev-server-status');
+            if (serverStatusElem) {
+                if (serverAvailable) {
+                    serverStatusElem.textContent = 'Online';
+                    serverStatusElem.style.color = '#00ff00';
+                } else {
+                    serverStatusElem.textContent = 'Offline';
+                    serverStatusElem.style.color = '#ff4444';
+                }
+            }
+        }
+        
+        // Enhanced dashboard state
+        let currentDevTab = 'overview';
+        let enhancedDashboardInterval = null;
+        let zoneHistory = [];
+        let patternHistory = [];
+        let martingaleManager = null;
+        let devGameHistory = [];
+        let serverConnected = serverAvailable;
+        
+        // Initialize Martingale Manager for dev dashboard
+        function initMartingaleManager() {
+            try {
+                if (!martingaleManager && typeof EnhancedMartingaleManager !== 'undefined') {
+                    martingaleManager = new EnhancedMartingaleManager(0.5);
+                    console.log('Enhanced Martingale Manager initialized');
+                }
+            } catch (e) {
+                console.error('Error initializing Martingale Manager:', e);
+            }
+            return martingaleManager;
+        }
+        
+        // Switch dev dashboard tabs
+        function switchDevTab(tabName) {
+            try {
+                console.log('Switching to tab:', tabName);
+                currentDevTab = tabName;
+                
+                // Update tab UI
+                document.querySelectorAll('.dev-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.tab === tabName);
+                });
+                
+                // Update panels
+                document.querySelectorAll('.tab-panel').forEach(panel => {
+                    panel.classList.toggle('active', panel.id === `${tabName}-panel`);
+                });
+                
+                // Force update
+                updateEnhancedDashboard();
+            } catch (e) {
+                console.error('Error switching tabs:', e);
+            }
+        }
+        
+        // Enhanced dashboard update
+        function updateEnhancedDashboard() {
+            if (!devDashboardOpen) return;
+            
+            // Update based on current tab
+            switch (currentDevTab) {
+                case 'overview':
+                    updateOverviewTab();
+                    break;
+                case 'zones':
+                    updateZonesTab();
+                    break;
+                case 'patterns':
+                    updatePatternsTab();
+                    break;
+                case 'martingale':
+                    updateMartingaleTab();
+                    break;
+                case 'history':
+                    updateHistoryTab();
+                    break;
+                case 'analytics':
+                    updateAnalyticsTab();
+                    break;
+            }
+            
+            // Always update critical indicators
+            updateCriticalIndicators();
+        }
+        
+        // Update Overview Tab
+        function updateOverviewTab() {
+            try {
+                // Current game stats
+                document.getElementById('dev-tick').textContent = gameData.tickIndex;
+                document.getElementById('dev-price').textContent = gameData.currentPrice.toFixed(2) + 'x';
+                
+                // Calculate volatility
+                const volatility = calculateCurrentVolatility();
+                document.getElementById('dev-volatility').textContent = (volatility * 100).toFixed(2) + '%';
+                
+                // Check if enhanced features are available
+                if (typeof survivalCalc !== 'undefined' && survivalCalc.calculate40TickRugProbability) {
+                    // Get risk assessment
+                    const risk = survivalCalc.assessCurrentRisk(
+                        gameData.tickIndex,
+                        volatility,
+                        currentGame && currentGame.peakPrice ? currentGame.peakPrice : gameData.currentPrice
+                    );
+                    const riskScoreElem = document.getElementById('risk-score');
+                    if (riskScoreElem) riskScoreElem.textContent = risk.riskScore.toFixed(0);
+                    
+                    // Update zone
+                    const rugProb = survivalCalc.calculate40TickRugProbability(
+                        gameData.tickIndex,
+                        volatility,
+                        currentGame && currentGame.peakPrice ? currentGame.peakPrice : gameData.currentPrice,
+                        devGameHistory
+                    );
+                    const zone = survivalCalc.getProbabilityZone(rugProb);
+                    
+                    const quickZone = document.getElementById('quick-zone');
+                    if (quickZone) {
+                        quickZone.textContent = zone.name + ' Zone';
+                        quickZone.style.color = zone.color;
+                    }
+                    
+                    const quickRugProb = document.getElementById('quick-rug-prob');
+                    if (quickRugProb) {
+                        quickRugProb.textContent = (rugProb * 100).toFixed(1) + '% rug probability';
+                    }
+                    
+                    // Update patterns
+                    updateActivePatterns();
+                } else {
+                    // Fallback when enhanced features not available
+                    const quickZone = document.getElementById('quick-zone');
+                    if (quickZone) {
+                        quickZone.textContent = 'Loading...';
+                        quickZone.style.color = '#666';
+                    }
+                }
+                
+                // Data collection stats (always available)
+                document.getElementById('dev-games').textContent = `${gameHistory.length}/100`;
+                document.getElementById('dev-total-games').textContent = totalGamesCollected.toString();
+                
+                const serverStatus = document.getElementById('dev-server-status');
+                if (serverStatus) {
+                    serverStatus.textContent = serverAvailable ? 'Online' : 'Offline';
+                    serverStatus.style.color = serverAvailable ? '#44ff44' : '#ff4444';
+                }
+            } catch (e) {
+                console.error('Error updating overview tab:', e);
+            }
+        }
+        
+        // Update Zones Tab
+        function updateZonesTab() {
+            const volatility = calculateCurrentVolatility();
+            const rugProb = survivalCalc.calculate40TickRugProbability(
+                gameData.tickIndex,
+                volatility,
+                currentGame && currentGame.peakPrice ? currentGame.peakPrice : gameData.currentPrice,
+                devGameHistory
+            );
+            const zone = survivalCalc.getProbabilityZone(rugProb);
+            
+            // Update zone visualization
+            const markerPosition = Math.min(rugProb * 100, 95);
+            const marker = document.getElementById('zone-marker');
+            if (marker) marker.style.left = markerPosition + '%';
+            
+            // Update zone info
+            const zoneNameElem = document.getElementById('zone-name');
+            if (zoneNameElem) zoneNameElem.textContent = zone.name;
+            
+            const rugProbElem = document.getElementById('rug-prob');
+            if (rugProbElem) rugProbElem.textContent = (rugProb * 100).toFixed(1) + '%';
+            
+            const zoneEvElem = document.getElementById('zone-ev');
+            if (zoneEvElem) zoneEvElem.textContent = (zone.expectedValue * 100).toFixed(1) + '%';
+            
+            const zoneRecElem = document.getElementById('zone-rec');
+            if (zoneRecElem) zoneRecElem.textContent = zone.recommendation;
+            
+            // Add to history every 10 ticks
+            if (gameData.tickIndex % 10 === 0 && gameData.gameActive) {
+                addZoneHistory(zone, rugProb);
+            }
+        }
+        
+        // Update Patterns Tab
+        function updatePatternsTab() {
+            if (devGameHistory.length === 0) return;
+            
+            const volatility = calculateCurrentVolatility();
+            const patterns = survivalCalc.detectHiddenPatterns(
+                devGameHistory,
+                gameData.tickIndex,
+                currentGame && currentGame.peakPrice ? currentGame.peakPrice : gameData.currentPrice,
+                volatility
+            );
+            
+            // Update pattern displays
+            updatePatternDisplay('pattern-insta', patterns.instaRugPattern, patterns.details.instaRug);
+            updatePatternDisplay('pattern-vol', patterns.volatilitySpikePattern, patterns.details.volatilitySpike);
+            updatePatternDisplay('pattern-plateau', patterns.plateauPattern, patterns.details.plateau);
+            updatePatternDisplay('pattern-recovery', patterns.recoveryPattern, patterns.details.recovery);
+        }
+        
+        // Update Martingale Tab
+        function updateMartingaleTab() {
+            const manager = initMartingaleManager();
+            if (!manager) return;
+            
+            const state = manager.getCurrentState();
+            
+            // Update purse visualization
+            const purseHeight = (state.purse.percentage || 100) + '%';
+            const purseLiquid = document.getElementById('purse-liquid');
+            if (purseLiquid) purseLiquid.style.height = purseHeight;
+            
+            const purseAmountElem = document.getElementById('purse-amount');
+            if (purseAmountElem) purseAmountElem.textContent = state.purse.current.toFixed(3) + ' SOL';
+            
+            document.getElementById('initial-purse').textContent = state.purse.initial.toFixed(3) + ' SOL';
+            document.getElementById('current-purse').textContent = state.purse.current.toFixed(3) + ' SOL';
+            document.getElementById('purse-health').textContent = state.purse.percentage.toFixed(0) + '%';
+            document.getElementById('purse-status').textContent = state.purse.health.message;
+            
+            // Update sequence display
+            for (let i = 1; i <= 10; i++) {
+                const step = document.getElementById(`seq-${i}`);
+                if (step) {
+                    step.classList.remove('active', 'completed', 'failed');
+                    if (i < state.sequence.level) {
+                        step.classList.add('completed');
+                    } else if (i === state.sequence.level) {
+                        step.classList.add('active');
+                    }
+                }
+            }
+            
+            document.getElementById('current-level').textContent = state.sequence.level;
+            document.getElementById('total-bets').textContent = state.sequence.totalBets.toFixed(3) + ' SOL';
+            document.getElementById('next-bet').textContent = state.sequence.standardBet.toFixed(3) + ' SOL';
+            document.getElementById('net-profit').textContent = (state.sequence.netProfitIfWin > 0 ? '+' : '') + 
+                state.sequence.netProfitIfWin.toFixed(3) + ' SOL';
+        }
+        
+        // Update History Tab
+        function updateHistoryTab() {
+            const browser = document.getElementById('game-browser');
+            if (!browser || gameHistory.length === 0) return;
+            
+            // Build game history display
+            const html = gameHistory.slice(-20).reverse().map((game, index) => {
+                const patterns = game.patterns || [];
+                return `
+                    <div class="game-item">
+                        <div class="game-duration">${game.duration}t</div>
+                        <div class="game-details">
+                            <span>Peak: ${game.peakPrice ? game.peakPrice.toFixed(1) + 'x' : '-'}</span>
+                            <span>Time: ${new Date(game.timestamp).toLocaleTimeString()}</span>
+                        </div>
+                        <div class="game-patterns">
+                            ${patterns.map(p => `<span class="pattern-badge">${p}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            browser.innerHTML = html || '<div style="text-align: center; color: #666; padding: 40px;">No games recorded yet</div>';
+        }
+        
+        // Update Analytics Tab
+        function updateAnalyticsTab() {
+            // Placeholder for future analytics
+        }
+        
+        // Helper Functions
+        function calculateCurrentVolatility() {
+            if (!currentGame || !currentGame.currentVolatility) return 0.002;
+            return currentGame.currentVolatility.standardDev || 0.002;
+        }
+        
+        function updateActivePatterns() {
+            try {
+                const container = document.getElementById('active-patterns');
+                if (!container) return;
+                
+                // Check if we have the required functions
+                if (!survivalCalc || !survivalCalc.detectHiddenPatterns || devGameHistory.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">No patterns detected</div>';
+                    return;
+                }
+                
+                const volatility = calculateCurrentVolatility();
+                const patterns = survivalCalc.detectHiddenPatterns(
+                    devGameHistory,
+                    gameData.tickIndex,
+                    currentGame && currentGame.peakPrice ? currentGame.peakPrice : gameData.currentPrice,
+                    volatility
+                );
+                
+                let activePatterns = [];
+                if (patterns.instaRugPattern) activePatterns.push('⚠️ Insta-rug');
+                if (patterns.volatilitySpikePattern) activePatterns.push('⚡ Volatility');
+                if (patterns.plateauPattern) activePatterns.push('⏸️ Plateau');
+                if (patterns.recoveryPattern) activePatterns.push('✅ Recovery');
+                
+                if (activePatterns.length > 0) {
+                    container.innerHTML = activePatterns.map(p => 
+                        `<div style="padding: 5px; margin: 2px; background: rgba(255,255,255,0.1); border-radius: 4px;">${p}</div>`
+                    ).join('');
+                } else {
+                    container.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">No patterns detected</div>';
+                }
+            } catch (e) {
+                console.error('Error updating active patterns:', e);
+            }
+        }
+        
+        function updatePatternDisplay(elementId, isActive, details) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            if (isActive) {
+                element.classList.add('active');
+                if (details) {
+                    const detailsElem = element.querySelector('.pattern-details');
+                    if (detailsElem) {
+                        let detailText = 'DETECTED! ';
+                        
+                        if (details.multiplier) {
+                            detailText += `Multiplier: ${details.multiplier.toFixed(1)}x`;
+                        } else if (details.currentVolatility) {
+                            detailText += `Volatility: ${(details.currentVolatility * 100).toFixed(2)}% (${details.ratio.toFixed(1)}x normal)`;
+                        } else if (details.duration) {
+                            detailText += `Duration: ${details.duration} ticks`;
+                        } else if (details.recoveryStrength) {
+                            detailText += `Recovery strength: ${details.recoveryStrength.toFixed(1)}x`;
+                        }
+                        
+                        detailsElem.textContent = detailText;
+                    }
+                }
+            } else {
+                element.classList.remove('active');
+                const detailsElem = element.querySelector('.pattern-details');
+                if (detailsElem) {
+                    if (elementId === 'pattern-insta') {
+                        detailsElem.textContent = 'Not detected - Requires 50x multiplier';
+                    } else if (elementId === 'pattern-vol') {
+                        detailsElem.textContent = 'Not detected - Monitoring volatility';
+                    } else if (elementId === 'pattern-plateau') {
+                        detailsElem.textContent = 'Not detected - Requires 30 tick window';
+                    } else if (elementId === 'pattern-recovery') {
+                        detailsElem.textContent = 'Not detected - Monitoring for dips';
+                    }
+                }
+            }
+        }
+        
+        function addZoneHistory(zone, probability) {
+            zoneHistory.push({
+                timestamp: Date.now(),
+                tick: gameData.tickIndex,
+                zone: zone.name,
+                probability: probability,
+                expectedValue: zone.expectedValue
+            });
+            
+            // Keep only last 100 entries
+            if (zoneHistory.length > 100) {
+                zoneHistory.shift();
+            }
+            
+            // Update display
+            renderZoneHistory();
+        }
+        
+        function renderZoneHistory() {
+            const tbody = document.getElementById('zone-history');
+            if (!tbody) return;
+            
+            // Clear existing
+            tbody.innerHTML = '';
+            
+            // Add last 10 entries
+            const recent = zoneHistory.slice(-10).reverse();
+            recent.forEach(entry => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${new Date(entry.timestamp).toLocaleTimeString()}</td>
+                    <td>${entry.zone}</td>
+                    <td>${(entry.probability * 100).toFixed(1)}%</td>
+                    <td>${(entry.expectedValue * 100).toFixed(1)}%</td>
+                `;
+            });
+            
+            if (recent.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #666;">No history yet</td></tr>';
+            }
+        }
+        
+        function updateCriticalIndicators() {
+            // Always update game tick history for pattern detection
+            if (gameData.gameActive && currentGame) {
+                devGameHistory.push({
+                    tick: gameData.tickIndex,
+                    multiplier: gameData.currentPrice,
+                    timestamp: Date.now()
+                });
+                
+                // Keep only last 500 ticks
+                if (devGameHistory.length > 500) {
+                    devGameHistory.shift();
+                }
+            }
+        }
+        
+        // Test pattern detection
+        function testPatterns() {
+            console.log('Testing pattern detection...');
+            // Create mock data with patterns
+            devGameHistory = [];
+            for (let i = 0; i < 100; i++) {
+                devGameHistory.push({
+                    tick: i,
+                    multiplier: 1 + (i * 0.5) + (Math.random() * 0.1),
+                    timestamp: Date.now() - (100 - i) * 1000
+                });
+            }
+            
+            // Add a 50x spike
+            devGameHistory.push({
+                tick: 100,
+                multiplier: 51.0,
+                timestamp: Date.now()
+            });
+            
+            updateEnhancedDashboard();
+            showToast('Pattern test data loaded', 'success');
+        }
+        
+        // Enhanced toggle function override
+        const originalUpdateDevDashboard = updateDevDashboard;
+        updateDevDashboard = function() {
+            // Call original for backward compatibility
+            originalUpdateDevDashboard();
+            
+            // Also update enhanced features
+            updateEnhancedDashboard();
+        };
+        
+        // Override toggle to start enhanced updates
+        const originalToggleDevDashboard = toggleDevDashboard;
+        toggleDevDashboard = function() {
+            originalToggleDevDashboard();
+            
+            if (devDashboardOpen) {
+                // Start enhanced updates
+                if (enhancedDashboardInterval) {
+                    clearInterval(enhancedDashboardInterval);
+                }
+                enhancedDashboardInterval = setInterval(updateEnhancedDashboard, 100);
+                
+                // Reset game history on open
+                devGameHistory = [];
+            } else {
+                // Stop enhanced updates
+                if (enhancedDashboardInterval) {
+                    clearInterval(enhancedDashboardInterval);
+                    enhancedDashboardInterval = null;
+                }
+            }
+        };
+        
+        // Dashboard button functions
+        function exportGameData() {
+            const dataStr = JSON.stringify({
+                version: 'v5_mobile',
+                exported: new Date().toISOString(),
+                stats: statsData,
+                games: gameHistory,
+                zones: zoneHistory,
+                patterns: patternHistory
+            }, null, 2);
+            
+            const blob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `rugs_data_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('Data exported successfully', 'success');
+        }
+        
+        function clearGameData() {
+            if (confirm('Clear all collected data? This cannot be undone.')) {
+                gameHistory = [];
+                currentBatch = [];
+                currentGame = null;
+                totalGamesCollected = 0;
+                batchNumber = 1;
+                statsData = {...BASELINE_STATS, lastUpdated: null};
+                localStorage.removeItem('v5_rolling_100_games');
+                localStorage.removeItem('v5_current_stats');
+                // Clear all batch data too
+                for (let key in localStorage) {
+                    if (key.startsWith('v5_batch_')) {
+                        localStorage.removeItem(key);
+                    }
+                }
+                updateDevDashboard();
+                showToast('Data cleared', 'warning');
+            }
+        }
+        
+        function forceDataSave() {
+            saveGameData();
+            showToast('Data saved to localStorage', 'success');
+        }
+        
+        function logCurrentStats() {
+            console.log('=== Current Statistics ===');
+            console.log('Games collected:', gameHistory.length);
+            console.log('Stats:', statsData);
+            console.log('Current batch size:', currentBatch.length);
+            console.log('Game history:', gameHistory);
+            showToast('Stats logged to console', 'info');
+        }
+        
+        async function showStorageInfo() {
+            // Calculate localStorage size
+            let localStorageSize = 0;
+            for (let key in localStorage) {
+                if (key.startsWith('v5_')) {
+                    localStorageSize += localStorage[key].length;
+                }
+            }
+            
+            // Get server storage info
+            let serverInfo = {
+                totalFiles: 0,
+                totalBatches: 0,
+                estimatedSize: 0
+            };
+            
+            if (serverAvailable) {
+                try {
+                    const response = await fetch(`${SAVE_SERVER_URL}/stats`);
+                    if (response.ok) {
+                        const stats = await response.json();
+                        serverInfo = {
+                            totalFiles: stats.totalGameFiles || 0,
+                            totalBatches: stats.totalBatchFiles || 0,
+                            estimatedSize: (stats.totalGameFiles * 2 + stats.totalBatchFiles * 50) // Rough estimate KB
+                        };
+                    }
+                } catch (error) {
+                    console.error('Failed to get server stats:', error);
+                }
+            }
+            
+            const localSizeKB = (localStorageSize / 1024).toFixed(2);
+            const serverSizeKB = serverInfo.estimatedSize.toFixed(2);
+            const totalSizeKB = (parseFloat(localSizeKB) + parseFloat(serverSizeKB)).toFixed(2);
+            
+            showToast(`Storage Info:\nLocal: ${localSizeKB} KB\nServer: ${serverSizeKB} KB (${serverInfo.totalFiles} files)\nTotal: ${totalSizeKB} KB\nGames in memory: ${gameHistory.length}\nCurrent batch: ${currentBatch.length}/50`, 'info', 5000);
+        }
+        
+        function simulateGame() {
+            const duration = Math.floor(Math.random() * 300) + 50;
+            const peak = Math.random() * 20 + 1;
+            
+            const fakeGame = {
+                startTime: new Date().toISOString(),
+                endTime: new Date().toISOString(),
+                duration: duration,
+                peakPrice: peak,
+                endPrice: 0,
+                ruggedAt: duration,
+                priceHistory: [],
+                timestamp: Date.now()
+            };
+            
+            gameHistory.push(fakeGame);
+            currentBatch.push(fakeGame);
+            totalGamesCollected++;
+            
+            // Check if batch is full
+            if (currentBatch.length >= 50) {
+                saveBatch();
+            }
+            
+            // Keep only last 100 in memory
+            if (gameHistory.length > 100) {
+                gameHistory = gameHistory.slice(-100);
+            }
+            
+            statsData = calculateStats(gameHistory);
+            saveGameData();
+            
+            // Also save to server
+            saveGameToServer(fakeGame);
+            
+            updateDevDashboard();
+            showToast(`Simulated game: ${duration} ticks, ${peak.toFixed(2)}x peak`, 'info');
+        }
+        
+        async function testServerSave() {
+            if (!serverAvailable) {
+                showToast('Server not available. Checking connection...', 'warning');
+                await checkServerConnection();
+                return;
+            }
+            
+            const testGame = {
+                startTime: new Date().toISOString(),
+                endTime: new Date().toISOString(),
+                duration: 123,
+                peakPrice: 4.56,
+                endPrice: 0,
+                ruggedAt: 123,
+                priceHistory: [1, 1.5, 2, 3, 4, 4.56],
+                timestamp: Date.now(),
+                test: true
+            };
+            
+            try {
+                const success = await saveGameToServer(testGame);
+                if (success) {
+                    showToast('Test save successful! Check server logs.', 'success');
+                } else {
+                    showToast('Test save failed', 'error');
+                }
+            } catch (error) {
+                showToast(`Test save error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Triple-tap detection on header
+        document.addEventListener('DOMContentLoaded', () => {
+            const header = document.querySelector('.header');
+            if (header) {
+                header.addEventListener('click', (e) => {
+                    tapCount++;
+                    
+                    if (tapTimer) clearTimeout(tapTimer);
+                    
+                    tapTimer = setTimeout(() => {
+                        if (tapCount >= 3) {
+                            toggleDevDashboard();
+                        }
+                        tapCount = 0;
+                    }, 500);
+                });
+            }
+            
+            // Show gear icon after 10 games
+            setInterval(() => {
+                const icon = document.getElementById('dev-toggle-icon');
+                if (gameHistory.length >= 10) {
+                    icon.classList.remove('hidden');
+                }
+                
+                // Update dashboard if open
+                updateDevDashboard();
+            }, 1000);
+            
+            // First-time instruction
+            if (!localStorage.getItem('v5_dev_toast_shown')) {
+                setTimeout(() => {
+                    showToast('Triple-tap header for dev tools', 'info');
+                    localStorage.setItem('v5_dev_toast_shown', 'true');
+                }, 3000);
+            }
+        });
+        
+        // Keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'd' && !e.ctrlKey && !e.altKey) {
+                toggleDevDashboard();
+            }
+        });
+        
+        // Function to update cooldown overlay - converted to toasts
+        let lastPhaseNotified = null;
+        function updateCooldownOverlay() {
+            // Instead of showing blocking overlay, use toast notifications
+            
+            if (gameData.gamePhase === 'RUGGED' || gameData.gamePhase === 'PRESALE') {
+                // Format cooldown timer
+                const seconds = Math.ceil(gameData.cooldownTimer / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                const timeStr = minutes > 0 ? 
+                    `${minutes}:${remainingSeconds.toString().padStart(2, '0')}` : 
+                    `${seconds}s`;
+                
+                // Only show toast once per phase change
+                if (gameData.gamePhase !== lastPhaseNotified) {
+                    if (gameData.gamePhase === 'RUGGED') {
+                        showToast(`🚨 RUGGED! Game ended.\nCooldown: ${timeStr}`, 'error', 5000);
+                    } else {
+                        showToast(`🎯 PRESALE Active!\nBuy in at 1.00x\nStarting in: ${timeStr}`, 'info', 5000);
+                    }
+                    lastPhaseNotified = gameData.gamePhase;
+                }
+                
+                // Don't update the game-status element as it replaces all stats
+                // Instead, we'll show the status in the recommendation bar
+            } else {
+                // Reset when game is active
+                if (gameData.gamePhase === 'GAME' && lastPhaseNotified !== 'GAME') {
+                    showToast('🎮 Game Started!', 'success', 2000);
+                    lastPhaseNotified = 'GAME';
+                }
+            }
+        }
+        
+        // Helper functions for enhanced display
+        function updateAdaptiveTargets(milestones) {
+            const targetGrid = document.getElementById('target-grid');
+            targetGrid.innerHTML = '';
+            
+            milestones.forEach(milestone => {
+                const row = document.createElement('div');
+                row.className = 'target-row';
+                
+                const label = document.createElement('span');
+                label.textContent = milestone.label;
+                
+                const prob = document.createElement('span');
+                prob.className = 'target-prob ' + getProbabilityClass(milestone.probability);
+                prob.textContent = (milestone.probability * 100).toFixed(1) + '%';
+                
+                row.appendChild(label);
+                row.appendChild(prob);
+                targetGrid.appendChild(row);
+            });
+        }
+        
+        function getProbabilityClass(probability) {
+            if (probability >= 0.7) return 'high';
+            if (probability >= 0.4) return 'medium';
+            if (probability >= 0.2) return 'low';
+            return 'very-low';
+        }
+        
+        function updateRiskAssessment(recommendation) {
+            // Update risk level
+            const riskScore = recommendation.riskScore;
+            let riskLevel = 'LOW';
+            let riskColor = '#00ff88';
+            
+            if (riskScore >= 80) {
+                riskLevel = 'EXTREME';
+                riskColor = '#ff4444';
+            } else if (riskScore >= 65) {
+                riskLevel = 'HIGH';
+                riskColor = '#ff9944';
+            } else if (riskScore >= 50) {
+                riskLevel = 'MODERATE';
+                riskColor = '#ffff44';
+            } else if (riskScore >= 35) {
+                riskLevel = 'LOW-MODERATE';
+                riskColor = '#88ff44';
+            }
+            
+            const riskLevelElement = document.getElementById('risk-level');
+            riskLevelElement.textContent = riskLevel;
+            riskLevelElement.style.color = riskColor;
+            
+            document.getElementById('risk-confidence').textContent = recommendation.confidence + ' confidence';
+            
+            // Update risk factors
+            const factors = recommendation.factors;
+            const factorsHtml = `
+                <span class="risk-factor">Duration: ${factors.duration}</span>
+                <span class="risk-factor">Volatility: ${factors.volatility}</span>
+                <span class="risk-factor">Rug Risk: ${factors.rugRisk50}</span>
+                <span class="risk-factor">Survival: ${factors.survivalRate}</span>
+            `;
+            document.getElementById('risk-factors').innerHTML = factorsHtml;
+            
+            // Update post-500 sequence indicator
+            const post500Context = survivalCalc.getPost500Context();
+            const post500Indicator = document.getElementById('post500-indicator');
+            const post500Value = document.getElementById('post500-value');
+            
+            if (post500Context.inSequence) {
+                post500Indicator.style.display = 'flex';
+                post500Indicator.className = `post500-indicator sequence-${post500Context.position}`;
+                post500Value.textContent = post500Context.description;
+            } else {
+                post500Indicator.style.display = 'none';
+            }
+            
+            // Update probability zone indicator
+            if (recommendation.zone) {
+                const zoneIndicator = document.getElementById('zone-indicator');
+                const zoneName = document.getElementById('zone-name');
+                const zoneMarker = document.getElementById('zone-marker');
+                
+                zoneIndicator.style.display = 'block';
+                zoneName.textContent = `${recommendation.zone.name} Zone (${recommendation.zone.probabilityPercent}%)`;
+                zoneName.style.color = recommendation.zone.color;
+                
+                // Position the marker based on probability
+                const prob = recommendation.rugProbability || 0;
+                let markerPosition = 0;
+                
+                if (prob <= 0.10) {
+                    markerPosition = (prob / 0.10) * 10; // 0-10%
+                } else if (prob <= 0.15) {
+                    markerPosition = 10 + ((prob - 0.10) / 0.05) * 5; // 10-15%
+                } else if (prob <= 0.20) {
+                    markerPosition = 15 + ((prob - 0.15) / 0.05) * 5; // 15-20%
+                } else if (prob <= 0.30) {
+                    markerPosition = 20 + ((prob - 0.20) / 0.10) * 10; // 20-30%
+                } else if (prob <= 0.50) {
+                    markerPosition = 30 + ((prob - 0.30) / 0.20) * 20; // 30-50%
+                } else {
+                    markerPosition = 50 + ((prob - 0.50) / 0.50) * 50; // 50-100%
+                }
+                
+                zoneMarker.style.left = markerPosition + '%';
+            }
+        }
+        
+        function updateRecommendation(recommendation) {
+            const box = document.getElementById('recommendation-box');
+            const text = document.getElementById('recommendation-text');
+            const details = document.getElementById('recommendation-details');
+            
+            // Check if we're in a non-game phase
+            if (gameData.gamePhase === 'RUGGED' || gameData.gamePhase === 'PRESALE' || gameData.gamePhase === 'WAITING') {
+                // Show game phase in recommendation bar
+                const seconds = Math.ceil(gameData.cooldownTimer / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                const timeStr = minutes > 0 ? 
+                    `${minutes}:${remainingSeconds.toString().padStart(2, '0')}` : 
+                    `${seconds}s`;
+                
+                if (gameData.gamePhase === 'RUGGED') {
+                    box.className = 'recommendation-box high-risk';
+                    text.textContent = '🚨 RUGGED';
+                    details.textContent = `Game ended - Cooldown: ${timeStr}`;
+                } else if (gameData.gamePhase === 'PRESALE') {
+                    box.className = 'recommendation-box enter';
+                    text.textContent = '🎯 PRESALE';
+                    details.textContent = `Buy in at 1.00x - Starting in: ${timeStr}`;
+                } else {
+                    box.className = 'recommendation-box hold';
+                    text.textContent = '⏳ WAITING';
+                    details.textContent = 'Waiting for next game...';
+                }
+            } else {
+                // Normal game recommendations
+                // Check if recommendation has valid data
+                if (recommendation && recommendation.recommendation) {
+                    // Update box class
+                    box.className = 'recommendation-box ' + recommendation.recommendation.toLowerCase();
+                    
+                    // Update text
+                    text.textContent = recommendation.recommendation;
+                    details.textContent = recommendation.rationale || '';
+                    
+                    // Add zone information if available
+                    if (recommendation.zone) {
+                        const zone = recommendation.zone;
+                        // Add zone indicator
+                        const zoneSpan = document.createElement('span');
+                        zoneSpan.style.display = 'inline-block';
+                        zoneSpan.style.padding = '2px 8px';
+                        zoneSpan.style.borderRadius = '4px';
+                        zoneSpan.style.marginLeft = '8px';
+                        zoneSpan.style.fontSize = '12px';
+                        zoneSpan.style.fontWeight = 'bold';
+                        zoneSpan.style.backgroundColor = zone.color + '33'; // Add transparency
+                        zoneSpan.style.color = zone.color;
+                        zoneSpan.style.border = `1px solid ${zone.color}`;
+                        zoneSpan.textContent = `${zone.name} (${zone.probabilityPercent}%)`;
+                        text.appendChild(zoneSpan);
+                        
+                        // Add side bet EV
+                        if (recommendation.sideByEV !== undefined) {
+                            const sbEV = recommendation.sideByEV;
+                            const sbText = sbEV >= 0 ? `+${(sbEV * 100).toFixed(1)}%` : `${(sbEV * 100).toFixed(1)}%`;
+                            details.textContent += ` | Side Bet EV: ${sbText}`;
+                        }
+                    }
+                    
+                    // Add expected value if available
+                    if (recommendation.expectedValue !== undefined) {
+                        const ev = recommendation.expectedValue;
+                        const evText = ev >= 0 ? `+${(ev * 100).toFixed(1)}%` : `${(ev * 100).toFixed(1)}%`;
+                        details.textContent += ` (EV: ${evText})`;
+                    }
+                } else {
+                    // Default state when no valid recommendation
+                    box.className = 'recommendation-box hold';
+                    text.textContent = 'ANALYZING...';
+                    details.textContent = 'Processing game state...';
+                }
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,692 @@
+{
+  "metadata": {
+    "generatedAt": "2025-07-21T18:27:42.771Z",
+    "totalGamesAnalyzed": 972,
+    "totalTicksProcessed": 192082,
+    "dataSource": "/mnt/c/Users/nomad/OneDrive/Desktop/JS-TERMINAL-DATA-Collector/side-bet-predictor/versions/data/batches"
+  },
+  "baseRates": {
+    "400+": {
+      "count": 132,
+      "rate": 0.13580246913580246,
+      "percentage": "13.58%"
+    },
+    "500+": {
+      "count": 80,
+      "rate": 0.0823045267489712,
+      "percentage": "8.23%"
+    },
+    "600+": {
+      "count": 41,
+      "rate": 0.04218106995884774,
+      "percentage": "4.22%"
+    }
+  },
+  "survivalCurves": {
+    "50": {
+      "count": 758,
+      "rate": 0.779835390946502,
+      "percentage": "78.0%"
+    },
+    "100": {
+      "count": 598,
+      "rate": 0.6152263374485597,
+      "percentage": "61.5%"
+    },
+    "150": {
+      "count": 452,
+      "rate": 0.46502057613168724,
+      "percentage": "46.5%"
+    },
+    "200": {
+      "count": 362,
+      "rate": 0.3724279835390947,
+      "percentage": "37.2%"
+    },
+    "250": {
+      "count": 291,
+      "rate": 0.2993827160493827,
+      "percentage": "29.9%"
+    },
+    "300": {
+      "count": 220,
+      "rate": 0.22633744855967078,
+      "percentage": "22.6%"
+    },
+    "350": {
+      "count": 175,
+      "rate": 0.1800411522633745,
+      "percentage": "18.0%"
+    },
+    "400": {
+      "count": 132,
+      "rate": 0.13580246913580246,
+      "percentage": "13.6%"
+    },
+    "450": {
+      "count": 99,
+      "rate": 0.10185185185185185,
+      "percentage": "10.2%"
+    },
+    "500": {
+      "count": 80,
+      "rate": 0.0823045267489712,
+      "percentage": "8.2%"
+    },
+    "600": {
+      "count": 41,
+      "rate": 0.04218106995884774,
+      "percentage": "4.2%"
+    },
+    "700": {
+      "count": 26,
+      "rate": 0.026748971193415638,
+      "percentage": "2.7%"
+    }
+  },
+  "conditionalProbabilities": {
+    "P(500+|50)": {
+      "probability": 0.10554089709762533,
+      "percentage": "10.6%",
+      "sampleSize": 758
+    },
+    "P(500+|100)": {
+      "probability": 0.13377926421404682,
+      "percentage": "13.4%",
+      "sampleSize": 598
+    },
+    "P(500+|150)": {
+      "probability": 0.17699115044247787,
+      "percentage": "17.7%",
+      "sampleSize": 452
+    },
+    "P(500+|200)": {
+      "probability": 0.22099447513812154,
+      "percentage": "22.1%",
+      "sampleSize": 362
+    },
+    "P(500+|250)": {
+      "probability": 0.27491408934707906,
+      "percentage": "27.5%",
+      "sampleSize": 291
+    },
+    "P(500+|300)": {
+      "probability": 0.36363636363636365,
+      "percentage": "36.4%",
+      "sampleSize": 220
+    },
+    "P(500+|350)": {
+      "probability": 0.45714285714285713,
+      "percentage": "45.7%",
+      "sampleSize": 175
+    },
+    "P(500+|400)": {
+      "probability": 0.6060606060606061,
+      "percentage": "60.6%",
+      "sampleSize": 132
+    },
+    "P(500+|450)": {
+      "probability": 0.8080808080808081,
+      "percentage": "80.8%",
+      "sampleSize": 99
+    }
+  },
+  "rugDistribution": {
+    "201-300": 144,
+    "101-200": 232,
+    "1-50": 215,
+    "51-100": 163,
+    "301-400": 87,
+    "401+": 131
+  },
+  "clusteringPatterns": {
+    "totalLongGames": 80,
+    "averageGap": 11.91139240506329,
+    "minGap": 1,
+    "maxGap": 48,
+    "gapDistribution": {
+      "mean": 11.91139240506329,
+      "median": 8,
+      "min": 1,
+      "max": 48,
+      "p25": 4,
+      "p75": 18
+    },
+    "longGameDetails": [
+      {
+        "index": 30,
+        "gameNumber": 79,
+        "duration": 506,
+        "peakMultiplier": 3.0997514710453213
+      },
+      {
+        "index": 35,
+        "gameNumber": 84,
+        "duration": 523,
+        "peakMultiplier": 4.313895822543578
+      },
+      {
+        "index": 43,
+        "gameNumber": 92,
+        "duration": 925,
+        "peakMultiplier": 12.268337096058568
+      },
+      {
+        "index": 46,
+        "gameNumber": 95,
+        "duration": 560,
+        "peakMultiplier": 1.3339249373942081
+      },
+      {
+        "index": 74,
+        "gameNumber": 123,
+        "duration": 657,
+        "peakMultiplier": 13.750908515044298
+      },
+      {
+        "index": 97,
+        "gameNumber": 146,
+        "duration": 582,
+        "peakMultiplier": 11.137514810592743
+      },
+      {
+        "index": 113,
+        "gameNumber": 162,
+        "duration": 544,
+        "peakMultiplier": 10.28611667467455
+      },
+      {
+        "index": 126,
+        "gameNumber": 175,
+        "duration": 721,
+        "peakMultiplier": 1.7267950859483443
+      },
+      {
+        "index": 130,
+        "gameNumber": 179,
+        "duration": 514,
+        "peakMultiplier": 6.943680543093736
+      },
+      {
+        "index": 143,
+        "gameNumber": 192,
+        "duration": 733,
+        "peakMultiplier": 1.9507237155659383
+      },
+      {
+        "index": 146,
+        "gameNumber": 195,
+        "duration": 611,
+        "peakMultiplier": 32.44049430087563
+      },
+      {
+        "index": 148,
+        "gameNumber": 197,
+        "duration": 616,
+        "peakMultiplier": 4.497489101103252
+      },
+      {
+        "index": 152,
+        "gameNumber": 201,
+        "duration": 753,
+        "peakMultiplier": 12.276405749906102
+      },
+      {
+        "index": 156,
+        "gameNumber": 205,
+        "duration": 755,
+        "peakMultiplier": 126.00262354577582
+      },
+      {
+        "index": 171,
+        "gameNumber": 220,
+        "duration": 726,
+        "peakMultiplier": 2.160752739578422
+      },
+      {
+        "index": 173,
+        "gameNumber": 222,
+        "duration": 547,
+        "peakMultiplier": 8.642732504878234
+      },
+      {
+        "index": 194,
+        "gameNumber": 243,
+        "duration": 668,
+        "peakMultiplier": 12.21451097617615
+      },
+      {
+        "index": 201,
+        "gameNumber": 250,
+        "duration": 843,
+        "peakMultiplier": 3.2301665432388433
+      },
+      {
+        "index": 208,
+        "gameNumber": 257,
+        "duration": 540,
+        "peakMultiplier": 1.201412033950901
+      },
+      {
+        "index": 221,
+        "gameNumber": 270,
+        "duration": 526,
+        "peakMultiplier": 2.6870904263320226
+      },
+      {
+        "index": 226,
+        "gameNumber": 275,
+        "duration": 594,
+        "peakMultiplier": 19.036564128306974
+      },
+      {
+        "index": 241,
+        "gameNumber": 290,
+        "duration": 1031,
+        "peakMultiplier": 1.6245020792828302
+      },
+      {
+        "index": 253,
+        "gameNumber": 302,
+        "duration": 510,
+        "peakMultiplier": 5.228843836111643
+      },
+      {
+        "index": 255,
+        "gameNumber": 304,
+        "duration": 1393,
+        "peakMultiplier": 258.94178114814264
+      },
+      {
+        "index": 266,
+        "gameNumber": 315,
+        "duration": 626,
+        "peakMultiplier": 6.235707618460675
+      },
+      {
+        "index": 269,
+        "gameNumber": 318,
+        "duration": 502,
+        "peakMultiplier": 4.009725801309206
+      },
+      {
+        "index": 276,
+        "gameNumber": 325,
+        "duration": 518,
+        "peakMultiplier": 2.353240164925226
+      },
+      {
+        "index": 281,
+        "gameNumber": 330,
+        "duration": 790,
+        "peakMultiplier": 16.09388382849741
+      },
+      {
+        "index": 283,
+        "gameNumber": 332,
+        "duration": 679,
+        "peakMultiplier": 5.661506324753534
+      },
+      {
+        "index": 306,
+        "gameNumber": 355,
+        "duration": 535,
+        "peakMultiplier": 1.19477632675276
+      },
+      {
+        "index": 344,
+        "gameNumber": 393,
+        "duration": 636,
+        "peakMultiplier": 9.206413731265895
+      },
+      {
+        "index": 352,
+        "gameNumber": 401,
+        "duration": 535,
+        "peakMultiplier": 7.694843012510024
+      },
+      {
+        "index": 379,
+        "gameNumber": 428,
+        "duration": 751,
+        "peakMultiplier": 4.841524954399387
+      },
+      {
+        "index": 384,
+        "gameNumber": 433,
+        "duration": 751,
+        "peakMultiplier": 1.7789035409237006
+      },
+      {
+        "index": 387,
+        "gameNumber": 436,
+        "duration": 550,
+        "peakMultiplier": 2.8336526034595244
+      },
+      {
+        "index": 395,
+        "gameNumber": 444,
+        "duration": 593,
+        "peakMultiplier": 16.664511131437973
+      },
+      {
+        "index": 398,
+        "gameNumber": 447,
+        "duration": 796,
+        "peakMultiplier": 24.441892540171438
+      },
+      {
+        "index": 408,
+        "gameNumber": 457,
+        "duration": 759,
+        "peakMultiplier": 1.3600562561312686
+      },
+      {
+        "index": 456,
+        "gameNumber": 505,
+        "duration": 538,
+        "peakMultiplier": 1.107206158998626
+      },
+      {
+        "index": 464,
+        "gameNumber": 513,
+        "duration": 829,
+        "peakMultiplier": 603.7313910055677
+      },
+      {
+        "index": 466,
+        "gameNumber": 515,
+        "duration": 510,
+        "peakMultiplier": 14.818666422852585
+      },
+      {
+        "index": 472,
+        "gameNumber": 521,
+        "duration": 1177,
+        "peakMultiplier": 6.208647113799273
+      },
+      {
+        "index": 473,
+        "gameNumber": 522,
+        "duration": 577,
+        "peakMultiplier": 6.911851241478222
+      },
+      {
+        "index": 494,
+        "gameNumber": 543,
+        "duration": 764,
+        "peakMultiplier": 34.65411526749815
+      },
+      {
+        "index": 500,
+        "gameNumber": 549,
+        "duration": 520,
+        "peakMultiplier": 10.416200359190924
+      },
+      {
+        "index": 519,
+        "gameNumber": 568,
+        "duration": 510,
+        "peakMultiplier": 1.1694845061081443
+      },
+      {
+        "index": 526,
+        "gameNumber": 575,
+        "duration": 679,
+        "peakMultiplier": 89.05205077344816
+      },
+      {
+        "index": 528,
+        "gameNumber": 577,
+        "duration": 806,
+        "peakMultiplier": 200.22355865247803
+      },
+      {
+        "index": 549,
+        "gameNumber": 598,
+        "duration": 688,
+        "peakMultiplier": 3.1922598631220787
+      },
+      {
+        "index": 557,
+        "gameNumber": 606,
+        "duration": 585,
+        "peakMultiplier": 1.0868381738152457
+      },
+      {
+        "index": 591,
+        "gameNumber": 640,
+        "duration": 695,
+        "peakMultiplier": 3.2425345410626503
+      },
+      {
+        "index": 603,
+        "gameNumber": 652,
+        "duration": 572,
+        "peakMultiplier": 1.0538494614221003
+      },
+      {
+        "index": 624,
+        "gameNumber": 673,
+        "duration": 515,
+        "peakMultiplier": 2.482479283071342
+      },
+      {
+        "index": 636,
+        "gameNumber": 685,
+        "duration": 953,
+        "peakMultiplier": 11.851980332276586
+      },
+      {
+        "index": 643,
+        "gameNumber": 692,
+        "duration": 584,
+        "peakMultiplier": 10.907019484768032
+      },
+      {
+        "index": 660,
+        "gameNumber": 709,
+        "duration": 503,
+        "peakMultiplier": 1.6714074130211303
+      },
+      {
+        "index": 668,
+        "gameNumber": 717,
+        "duration": 562,
+        "peakMultiplier": 1.0238136318189355
+      },
+      {
+        "index": 671,
+        "gameNumber": 720,
+        "duration": 779,
+        "peakMultiplier": 4.207795098329736
+      },
+      {
+        "index": 680,
+        "gameNumber": 729,
+        "duration": 541,
+        "peakMultiplier": 3.7296566409473693
+      },
+      {
+        "index": 683,
+        "gameNumber": 732,
+        "duration": 770,
+        "peakMultiplier": 31.150204849060803
+      },
+      {
+        "index": 704,
+        "gameNumber": 753,
+        "duration": 555,
+        "peakMultiplier": 1.5308075321845207
+      },
+      {
+        "index": 724,
+        "gameNumber": 773,
+        "duration": 553,
+        "peakMultiplier": 2.287051506271681
+      },
+      {
+        "index": 742,
+        "gameNumber": 791,
+        "duration": 668,
+        "peakMultiplier": 1.7051348787346063
+      },
+      {
+        "index": 759,
+        "gameNumber": 808,
+        "duration": 522,
+        "peakMultiplier": 10.160649425278706
+      },
+      {
+        "index": 760,
+        "gameNumber": 809,
+        "duration": 664,
+        "peakMultiplier": 533.6482618707454
+      },
+      {
+        "index": 778,
+        "gameNumber": 827,
+        "duration": 723,
+        "peakMultiplier": 11.595909353950772
+      },
+      {
+        "index": 782,
+        "gameNumber": 831,
+        "duration": 674,
+        "peakMultiplier": 7.025514926946867
+      },
+      {
+        "index": 807,
+        "gameNumber": 856,
+        "duration": 500,
+        "peakMultiplier": 2.6398665862411623
+      },
+      {
+        "index": 810,
+        "gameNumber": 859,
+        "duration": 591,
+        "peakMultiplier": 5.513490940577989
+      },
+      {
+        "index": 837,
+        "gameNumber": 886,
+        "duration": 522,
+        "peakMultiplier": 3.0275001077917825
+      },
+      {
+        "index": 855,
+        "gameNumber": 904,
+        "duration": 770,
+        "peakMultiplier": 41.662600573854036
+      },
+      {
+        "index": 856,
+        "gameNumber": 905,
+        "duration": 521,
+        "peakMultiplier": 7.67372455346315
+      },
+      {
+        "index": 874,
+        "gameNumber": 923,
+        "duration": 730,
+        "peakMultiplier": 3.5389520049672583
+      },
+      {
+        "index": 876,
+        "gameNumber": 925,
+        "duration": 639,
+        "peakMultiplier": 23.996034655413368
+      },
+      {
+        "index": 894,
+        "gameNumber": 943,
+        "duration": 1356,
+        "peakMultiplier": 45.80815474687849
+      },
+      {
+        "index": 900,
+        "gameNumber": 949,
+        "duration": 559,
+        "peakMultiplier": 32.371345045666466
+      },
+      {
+        "index": 903,
+        "gameNumber": 952,
+        "duration": 620,
+        "peakMultiplier": 1.1663848761300506
+      },
+      {
+        "index": 948,
+        "gameNumber": 997,
+        "duration": 563,
+        "peakMultiplier": 9.34718318435227
+      },
+      {
+        "index": 960,
+        "gameNumber": 1009,
+        "duration": 740,
+        "peakMultiplier": 55.86924611563847
+      },
+      {
+        "index": 971,
+        "gameNumber": 1020,
+        "duration": 537,
+        "peakMultiplier": 2.5155716296707626
+      }
+    ],
+    "clustersFound": 54,
+    "clusteringRate": 0.6835443037974683
+  },
+  "volatilityProfiles": {
+    "shortGames": {
+      "count": 374,
+      "average": 0.05237076415875293,
+      "distribution": {
+        "mean": 0.05237076415875287,
+        "median": 0.05784587690530633,
+        "min": 0,
+        "max": 0.10939596284247506,
+        "p25": 0.039920583898362824,
+        "p75": 0.06843499987632888
+      }
+    },
+    "mediumGames": {
+      "count": 466,
+      "average": 0.06533173406453233,
+      "distribution": {
+        "mean": 0.06533173406453234,
+        "median": 0.06576319625555913,
+        "min": 0.03756340813008577,
+        "max": 0.09068497604015907,
+        "p25": 0.06043921972712972,
+        "p75": 0.07046165068369621
+      }
+    },
+    "longGames": {
+      "count": 132,
+      "average": 0.0671433208887637,
+      "distribution": {
+        "mean": 0.06714332088876365,
+        "median": 0.06742123387397651,
+        "min": 0.05592763698557469,
+        "max": 0.07795281138473127,
+        "p25": 0.06449875342842139,
+        "p75": 0.06981045265251645
+      }
+    }
+  },
+  "keyFindings": {
+    "averageGameDuration": 198,
+    "medianFromSample": 137,
+    "longGameCharacteristics": {
+      "count": 80,
+      "averageDuration": 663,
+      "averagePeakMultiplier": 31.3543006301189,
+      "volatilityProfile": {
+        "average": 0.06657421113849854,
+        "belowThreshold": 0,
+        "belowThresholdRate": 0
+      }
+    }
+  }
+}

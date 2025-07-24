@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Data files
+data/live/
+data/archive/
+data/2025/
+data/recommendations/
+*.backup.*
+*.json.backup
+
+# Test files
+*.test.js
+*.test.html
+*-debug.*
+*-test.*
+/tests/coverage/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build files
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Claude AI files
+.claude/

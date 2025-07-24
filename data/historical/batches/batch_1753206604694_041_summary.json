@@ -1,0 +1,21 @@
+{
+  "batchId": "batch_1753206604694_041",
+  "batchNumber": 41,
+  "timestamp": "2025-07-22T17:50:04.694Z",
+  "games": 50,
+  "stats": {
+    "count": 50,
+    "mean": 94,
+    "median": 94,
+    "std": 0,
+    "min": 94,
+    "max": 94,
+    "percentiles": {
+      "p25": 94,
+      "p50": 94,
+      "p75": 94,
+      "p90": 94,
+      "p95": 94
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "dataDir": "./data",
+  "liveData": "./data/live",
+  "historicalData": "./data/historical",
+  "batchDir": "./data/historical/batches",
+  "archiveDir": "./data/archive",
+  "rollingFile": "./data/live/rolling_100_games.json",
+  "serverPort": 9876
+}

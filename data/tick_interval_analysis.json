@@ -1,0 +1,288 @@
+{
+  "metadata": {
+    "analysisDate": "2025-07-24T00:20:50.308Z",
+    "gamesAnalyzed": 100,
+    "totalIntervals": 22507,
+    "samplingMethod": "random",
+    "sampleSize": 100
+  },
+  "aggregateStatistics": {
+    "count": 22507,
+    "mean": 271.5265917270183,
+    "median": 251,
+    "stdDev": 295.2535236280361,
+    "variance": 87174.64321477125,
+    "min": 39,
+    "max": 5199,
+    "percentiles": {
+      "p5": 237,
+      "p25": 246,
+      "p75": 255,
+      "p95": 269,
+      "p99": 332
+    },
+    "iqr": 9,
+    "coefficientOfVariation": 1.087383455705406
+  },
+  "distribution": {
+    "counts": {
+      "under200ms": 87,
+      "between200and300ms": 22089,
+      "between300and500ms": 224,
+      "between500and1000ms": 7,
+      "over1000ms": 100
+    },
+    "percentages": {
+      "under200ms": "0.39%",
+      "between200and300ms": "98.14%",
+      "between300and500ms": "1.00%",
+      "between500and1000ms": "0.03%",
+      "over1000ms": "0.44%"
+    }
+  },
+  "recommendations": {
+    "nominalTick": 250,
+    "observedMean": 271.5265917270183,
+    "observedMedian": 251,
+    "reliableRange": {
+      "min": 237,
+      "max": 269
+    },
+    "adaptiveModelRequired": true,
+    "keyFindings": [
+      "High variance detected (CV: 1.09). Adaptive timing models are essential."
+    ]
+  },
+  "individualGames": [
+    {
+      "gameId": "20250710-02eb09ae192048f8",
+      "timestamp": "2025-07-10T05:33:22.123Z",
+      "tickCount": 5,
+      "intervals": {
+        "count": 7,
+        "mean": 903.8571428571429,
+        "median": 258,
+        "stdDev": 1521.894254686895,
+        "variance": 2316162.1224489794,
+        "min": 250,
+        "max": 4629,
+        "percentiles": {
+          "p5": 250,
+          "p25": 250,
+          "p75": 423,
+          "p95": 4629,
+          "p99": 4629
+        },
+        "iqr": 173,
+        "coefficientOfVariation": 1.6837774273444388
+      }
+    },
+    {
+      "gameId": "20250709-c657c9478c354d8e",
+      "timestamp": "2025-07-09T00:37:20.637Z",
+      "tickCount": 325,
+      "intervals": {
+        "count": 327,
+        "mean": 265.9908256880734,
+        "median": 251,
+        "stdDev": 246.73335514211544,
+        "variance": 60877.34853968526,
+        "min": 198,
+        "max": 4713,
+        "percentiles": {
+          "p5": 233,
+          "p25": 246,
+          "p75": 257,
+          "p95": 276,
+          "p99": 305
+        },
+        "iqr": 11,
+        "coefficientOfVariation": 0.9276009971541607
+      }
+    },
+    {
+      "gameId": "20250712-ddb41581cf024439",
+      "timestamp": "2025-07-12T01:42:13.619Z",
+      "tickCount": 121,
+      "intervals": {
+        "count": 123,
+        "mean": 289.6016260162602,
+        "median": 251,
+        "stdDev": 404.2903396032901,
+        "variance": 163450.67869654362,
+        "min": 90,
+        "max": 4747,
+        "percentiles": {
+          "p5": 242,
+          "p25": 248,
+          "p75": 255,
+          "p95": 280,
+          "p99": 408
+        },
+        "iqr": 7,
+        "coefficientOfVariation": 1.396022339945669
+      }
+    },
+    {
+      "gameId": "20250710-1aa4b38e07d549b2",
+      "timestamp": "2025-07-10T00:46:46.266Z",
+      "tickCount": 202,
+      "intervals": {
+        "count": 204,
+        "mean": 272.3480392156863,
+        "median": 251,
+        "stdDev": 295.0938890904187,
+        "variance": 87080.40337850834,
+        "min": 210,
+        "max": 4473,
+        "percentiles": {
+          "p5": 240,
+          "p25": 247,
+          "p75": 254,
+          "p95": 265,
+          "p99": 283
+        },
+        "iqr": 7,
+        "coefficientOfVariation": 1.083517582649893
+      }
+    },
+    {
+      "gameId": "20250708-7c75279b590a4975",
+      "timestamp": "2025-07-08T16:41:57.518Z",
+      "tickCount": 5,
+      "intervals": {
+        "count": 7,
+        "mean": 962.7142857142857,
+        "median": 265,
+        "stdDev": 1652.181995707124,
+        "variance": 2729705.3469387754,
+        "min": 245,
+        "max": 5007,
+        "percentiles": {
+          "p5": 245,
+          "p25": 245,
+          "p75": 429,
+          "p95": 5007,
+          "p99": 5007
+        },
+        "iqr": 184,
+        "coefficientOfVariation": 1.716170644005026
+      }
+    },
+    {
+      "gameId": "20250710-f8fca531e4dd43a8",
+      "timestamp": "2025-07-10T07:42:09.917Z",
+      "tickCount": 102,
+      "intervals": {
+        "count": 104,
+        "mean": 295.5576923076923,
+        "median": 250,
+        "stdDev": 444.9602580983861,
+        "variance": 197989.63128698233,
+        "min": 215,
+        "max": 4810,
+        "percentiles": {
+          "p5": 238,
+          "p25": 246,
+          "p75": 256,
+          "p95": 274,
+          "p99": 312
+        },
+        "iqr": 10,
+        "coefficientOfVariation": 1.5054937485273001
+      }
+    },
+    {
+      "gameId": "20250710-f7f6cad57994477a",
+      "timestamp": "2025-07-10T13:56:27.514Z",
+      "tickCount": 334,
+      "intervals": {
+        "count": 336,
+        "mean": 264.2767857142857,
+        "median": 251,
+        "stdDev": 243.41240515821372,
+        "variance": 59249.59898490639,
+        "min": 200,
+        "max": 4716,
+        "percentiles": {
+          "p5": 240,
+          "p25": 247,
+          "p75": 254,
+          "p95": 261,
+          "p99": 292
+        },
+        "iqr": 7,
+        "coefficientOfVariation": 0.921051027998241
+      }
+    },
+    {
+      "gameId": "20250710-de1b59461cc240d5",
+      "timestamp": "2025-07-10T06:59:29.219Z",
+      "tickCount": 43,
+      "intervals": {
+        "count": 45,
+        "mean": 348.6222222222222,
+        "median": 252,
+        "stdDev": 633.2193683037985,
+        "variance": 400966.7683950616,
+        "min": 235,
+        "max": 4548,
+        "percentiles": {
+          "p5": 242,
+          "p25": 248,
+          "p75": 257,
+          "p95": 281,
+          "p99": 4548
+        },
+        "iqr": 9,
+        "coefficientOfVariation": 1.8163482645124258
+      }
+    },
+    {
+      "gameId": "20250708-48c4cfe2a5474c25",
+      "timestamp": "2025-07-08T17:39:07.212Z",
+      "tickCount": 33,
+      "intervals": {
+        "count": 35,
+        "mean": 384.57142857142856,
+        "median": 251,
+        "stdDev": 756.9251061541894,
+        "variance": 572935.6163265309,
+        "min": 238,
+        "max": 4797,
+        "percentiles": {
+          "p5": 238,
+          "p25": 247,
+          "p75": 257,
+          "p95": 339,
+          "p99": 4797
+        },
+        "iqr": 10,
+        "coefficientOfVariation": 1.968230216597075
+      }
+    },
+    {
+      "gameId": "20250710-555b85947aaa4206",
+      "timestamp": "2025-07-10T04:57:02.978Z",
+      "tickCount": 441,
+      "intervals": {
+        "count": 443,
+        "mean": 261.1083521444695,
+        "median": 251,
+        "stdDev": 208.49150124829993,
+        "variance": 43468.70609276985,
+        "min": 185,
+        "max": 4637,
+        "percentiles": {
+          "p5": 236,
+          "p25": 246,
+          "p75": 255,
+          "p95": 266,
+          "p99": 297
+        },
+        "iqr": 9,
+        "coefficientOfVariation": 0.7984865268995416
+      }
+    }
+  ]
+}
