@@ -2,6 +2,20 @@
 
 A sophisticated real-time decision support system for cryptocurrency side betting on Rugs.fun, featuring advanced probability calculations, pattern detection, and martingale strategy optimization.
 
+## 📸 Screenshots
+
+### Mobile Dashboard
+![Mobile Dashboard](docs/pics/mainDash.png)
+*The main Martingale Mobile Assistant Dashboard view - providing real-time game analysis and strategic recommendations*
+
+### Developer Dashboard - Zones Tab
+![Developer Dashboard Zones](docs/pics/devdash_zones.png)
+*The Zones tab in the developer dashboard showing the 6-zone probability framework with risk assessment visualization*
+
+### Martingale Strategy Visualization
+![Martingale Strategy Chart](docs/pics/punnet_squares.png)
+*Profit/loss visualization across consecutive bets using modified martingale strategies. This chart illustrates the vast permutations available when starting with a 0.001 SOL bet and using various doubling delay strategies (immediate double, wait 1 bet, wait 2 bets, etc.). The system precalculates all potential outcomes and provides players with manageable strategic choices: conservative (small but highly likely profits), moderate (balanced risk/reward), or aggressive (maximum risk/reward ratio).*
+
 ## 🚀 Features
 
 ### Core Capabilities
@@ -30,8 +44,8 @@ A sophisticated real-time decision support system for cryptocurrency side bettin
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/martingale-optimizer-v5.3.git
-cd martingale-optimizer-v5.3
+git clone https://github.com/Dutchthenomad/martin-opt.git
+cd martin-opt
 ```
 
 2. Install dependencies:
