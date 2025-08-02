@@ -1,0 +1,189 @@
+# Sweep configuration for Martingale Optimizer v5.3
+# This configuration helps Sweep AI understand your project structure and preferences
+
+# Project description for context
+description: |
+  Martingale Optimizer v5.3 - A sophisticated side betting decision support system for Rugs.fun.
+  Provides real-time analysis, multiple betting strategies, and predictive capabilities based on 
+  extensive PRNG research and empirical data analysis.
+
+# Directories to watch for changes
+include_dirs:
+  - src/
+  - docs/
+  - scripts/
+  - config/
+  - GRAD-STUDY/
+
+# Directories to ignore
+exclude_dirs:
+  - node_modules/
+  - data/archive/
+  - data/batches/
+  - .git/
+
+# File patterns to include
+include_patterns:
+  - "*.js"
+  - "*.json"
+  - "*.md"
+  - "*.html"
+  - "*.py"
+  - "*.csv"
+
+# File patterns to exclude
+exclude_patterns:
+  - "game_*.json"
+  - "batch_*.json"
+  - "*.log"
+  - "*.tmp"
+  - "package-lock.json"
+
+# Documentation preferences
+docs:
+  # Where to look for existing documentation
+  paths:
+    - docs/
+    - GRAD-STUDY/
+  # Documentation style preferences
+  style: |
+    - Use clear, technical language
+    - Include code examples where relevant
+    - Reference existing research in GRAD-STUDY when applicable
+    - Maintain consistency with existing documentation format
+
+# Code style preferences
+code_style:
+  language_defaults:
+    javascript:
+      style: |
+        - Use ES6+ features (arrow functions, destructuring, etc.)
+        - Prefer const over let, avoid var
+        - Use descriptive variable names (e.g., gameData not gd)
+        - Add JSDoc comments for functions
+        - Follow existing patterns in the codebase
+    python:
+      style: |
+        - Follow PEP 8 guidelines
+        - Use type hints where applicable
+        - Include docstrings for functions and classes
+
+# Testing preferences
+testing:
+  framework: "none" # Project currently has no formal test framework
+  test_location: "test/"
+  preferences: |
+    - When adding features, consider creating simple test scripts
+    - Validate against historical data when modifying strategies
+    - Test WebSocket connections and data persistence
+
+# Pull request preferences
+pull_request:
+  title_format: "[Component] Brief description"
+  description_template: |
+    ## Summary
+    Brief description of changes
+
+    ## Changes Made
+    - List of specific changes
+    
+    ## Testing
+    - How the changes were tested
+    - Any validation against historical data
+    
+    ## Related Issues
+    - Reference any related issues or discussions
+
+# Issue handling preferences
+issues:
+  labels:
+    bug: "Issues affecting system functionality"
+    enhancement: "New features or improvements"
+    strategy: "Changes to betting strategies"
+    data: "Data collection or persistence issues"
+    ui: "User interface improvements"
+    research: "Research or analysis tasks"
+    migration: "Backend migration and compatibility issues"
+  
+  # Priority issues that need immediate attention
+  priority_fixes:
+    - name: "Backend Migration"
+      description: "Add ?frontend-version=1.0 to all Socket.IO connections"
+      files_affected:
+        - "src/ai/websocket-manager.js"
+        - "src/ui/mobile-dashboard.html"
+        - "GRAD-STUDY/03-IMPLEMENTATION/UI/basic-rugs-dashboard.html"
+        - "test-dashboard.html"
+      severity: "critical"
+
+# Component-specific rules
+components:
+  - name: "WebSocket Integration"
+    path: "src/ai/websocket-manager.js"
+    rules: |
+      - CRITICAL: Do not change field names (tickCount, price, cooldownTimer)
+      - CRITICAL: Connection URL must include ?frontend-version=1.0 parameter
+      - Maintain real-time performance (<50ms latency)
+      - Handle reconnection gracefully
+      - Update needed: Add frontend-version parameter to connection URL
+  
+  - name: "Data Save Server"
+    path: "src/server/data-save-server.js"
+    rules: |
+      - Keep port 9876
+      - Maintain backward compatibility with data format
+      - Ensure non-blocking saves
+  
+  - name: "Strategy Calculator"
+    path: "src/core/survival_calculator.js"
+    rules: |
+      - Validate changes against historical data
+      - Maintain existing tier system (1-4)
+      - Document any probability model changes
+  
+  - name: "Mobile Dashboard"
+    path: "src/ui/mobile-dashboard.html"
+    rules: |
+      - Maintain responsive design
+      - Use toast notifications (not alerts)
+      - Keep triple-tap developer dashboard access
+      - Update needed: Add ?frontend-version=1.0 to Socket.IO connection URL
+
+# Project-specific context
+context:
+  critical_mechanics: |
+    - Binary bet: Will game end in next 40 ticks?
+    - Payout: 5:1 for correct prediction
+    - Mean tick duration: 271.5ms
+    - Post-500 sequence patterns are important
+  
+  research_notes: |
+    - GRAD-STUDY contains extensive PRNG analysis
+    - Consult existing research before major changes
+    - Empirical data validates theoretical models
+  
+  known_issues: |
+    - Batch progress counter shows incorrect values
+    - Storage calculation only checks localStorage
+    - Data directory structure needs consolidation
+    - CRITICAL: Backend migration required - must add ?frontend-version=1.0 to all Socket.IO URLs
+
+# Sweep behavior configuration
+behavior:
+  # How Sweep should approach changes
+  change_approach: "conservative"
+  
+  # Whether to create new files vs modifying existing
+  prefer_modification: true
+  
+  # Auto-testing behavior
+  auto_test: false
+  
+  # Documentation updates
+  update_docs: true
+  
+  # Code review preferences
+  review_requirements: |
+    - Changes to strategies need validation
+    - WebSocket field changes are prohibited
+    - Performance impact must be considered
